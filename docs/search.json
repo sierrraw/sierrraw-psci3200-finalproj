@@ -4,13 +4,20 @@
     "href": "index.html",
     "title": "Sierra’s Website :D",
     "section": "",
-    "text": "I am a human and this is my website.\n\n1 + 1\n\n[1] 2"
+    "text": "1 + 1\n\n[1] 2"
   },
   {
     "objectID": "about.html",
     "href": "about.html",
     "title": "About",
     "section": "",
-    "text": "About this site\n\n1 + 1\n\n[1] 2"
+    "text": "I am a human.\n\n1 + 1\n\n[1] 2"
+  },
+  {
+    "objectID": "project.html",
+    "href": "project.html",
+    "title": "Project",
+    "section": "",
+    "text": "1 + 1\n\n[1] 2"
   }
 ]

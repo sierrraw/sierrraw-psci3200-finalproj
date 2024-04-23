@@ -12,3 +12,8 @@ format:
 
 editor: source
 ---
+
+```{r}
+1 + 1
+```
+

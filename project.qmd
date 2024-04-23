@@ -1,0 +1,14 @@
+---
+title: "Project"
+author: "Sierra Wei"
+
+institute: "University of Pennsylvania"
+date: last-modified
+toc: true
+
+format: 
+ html:
+  self-contained: true
+
+editor: source
+---

@@ -1,10 +1,8 @@
 ---
-title: "sierrraw-psci3200-finalproj"
+title: Sierra's Website :D
 ---
 
-This is a Quarto website.
-
-To learn more about Quarto websites visit <https://quarto.org/docs/websites>.
+I am a human and this is my website.
 
 ```{r}
 1 + 1

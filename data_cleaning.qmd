@@ -1,0 +1,292 @@
+---
+title: "data_cleaning"
+author: "Sierra Wei"
+
+institute: "University of Pennsylvania"
+date: last-modified
+toc: true
+
+format: 
+ html:
+  self-contained: true
+
+editor: source
+---
+
+```{r}
+library(tidyverse)
+library(ggplot2)
+library("ggdag")
+library(dplyr)
+library("gt")
+library(modelsummary)
+library("ggpubr")
+
+```
+
+```{r}
+
+#clear work space
+rm(list=ls())
+
+# read-in data
+
+load("/Users/sierra/Documents/GitHub/sierrraw-psci3200-finalproj/data/Latinobarometro_2023_Eng_Rdata_v1_0.rdata")
+df23_raw <- Latinobarometro_2023_Eng_v1_0
+
+# subset data
+df23 <- df23_raw[,c(1:22, 29, 35, 36, 39:47, 58, 60:62, 68, 69, 73:78, 79, 93, 115, 116:119, 120, 121, 125:129, 132, 141, 155, 160, 194, 195, 202, 205, 212, 214, 215, 216, 221, 222, 225, 244, 247, 248, 267, 268)]
+
+```
+
+```{r}
+
+### clean the variables
+
+# religion: df23$S1
+df23$religion <- NA
+df23$religion[df23$S1 == 1] <- "catholic"
+df23$religion[df23$S1 == 2] <- "evangelical"
+df23$religion[df23$S1 == 3] <- "evangelical baptism"
+df23$religion[df23$S1 == 4] <- "evangelical methodist"
+df23$religion[df23$S1 == 5] <- "evangelical pentecostal"
+df23$religion[df23$S1 == 6] <- "adventist"
+df23$religion[df23$S1 == 7] <- "jv"
+df23$religion[df23$S1 == 8] <- "mormon"
+df23$religion[df23$S1 == 9] <- "jewish"
+df23$religion[df23$S1 == 10] <- "protestant"
+df23$religion[df23$S1 == 11] <- "african cult/umbanda"
+df23$religion[df23$S1 == 12] <- "believer, no church"
+df23$religion[df23$S1 == 13] <- "agnostic"
+df23$religion[df23$S1 == 14] <- "atheist"
+df23$religion[df23$S1 == 96] <- "other"
+df23$religion[df23$S1 == 97] <- "none"
+
+# subset religion into 2 categories
+# large: 1. Catholic
+# small: 6. Adventist, 7. Jehovah's Witnesses, 8. Mormón
+
+df23$christian_small <- NA # boolean for Adventist, Jehovah's Witnesses, and Mormón vs caths
+for (i in 1:nrow(df23)) {
+  if (df23$S1[i] == 1) {
+    df23$christian_small[i] <- 0
+  } else if (df23$S1[i] == 6 || df23$S1[i] == 7 || df23$S1[i] == 8) {
+    df23$christian_small[i] <- 1
+  }
+}
+
+# large: 2. Evangelical
+# small: 6. Adventist, 7. Jehovah's Witnesses, 8. Mormón
+df23$christian_small_e <- NA
+for (i in 1:nrow(df23)) {
+  if (df23$S1[i] == 2) {
+    df23$christian_small_e[i] <- 0
+  } else if (df23$S1[i] == 6 || df23$S1[i] == 7 || df23$S1[i] == 8) {
+    df23$christian_small_e[i] <- 1
+  } 
+}
+
+# 1: mormon, 0: cath
+df23$mormon <- NA 
+df23$mormon[df23$S1 == 8] <- 1
+df23$mormon[df23$S1 == 1] <- 0
+
+# 1: mormon, 0: e
+df23$mormon_e <- NA 
+df23$mormon_e[df23$S1 == 8] <- 1
+df23$mormon_e[df23$S1 == 2] <- 0
+
+# boolean for JV
+df23$jv <- NA
+df23$jv[df23$S1 == 7] <- 1
+df23$jv[df23$S1 == 1] <- 0
+
+df23$jv_e <- NA
+df23$jv_e[df23$S1 == 7] <- 1
+df23$jv_e[df23$S1 == 2] <- 0
+
+# boolean for adventist
+df23$adv <- NA
+df23$adv[df23$S1 == 6] <- 1
+df23$adv[df23$S1 == 1] <- 0
+
+df23$adv_e <- NA
+df23$adv_e[df23$S1 == 6] <- 1
+df23$adv_e[df23$S1 == 2] <- 0
+
+# boolean for catholic
+df23$cath <- 0
+df23$cath[df23$S1 == 1] <- 1
+
+# boolean for evan
+df23$evan <- 0
+df23$evan[df23$S1 == 2] <- 1
+
+# boolean for pentecostal evangelicalism
+df23$pent_evan <- NA
+df23$pent_evan[df23$S1 == 5] <- 1
+df23$pent_evan[df23$S1 == 1] <- 0
+
+# opinon of US: df23$P23ST.A
+for (i in 1:nrow(df23)) { # recode so it is on scale from 0 - 1
+    if (df23$P23ST.A[i] == 1) { # very favorable
+      df23$P23ST.A[i] <- 1
+    } else if (df23$P23ST.A[i] == 2) { 
+      df23$P23ST.A[i] <- 0.67
+    } else if (df23$P23ST.A[i] == 3) { 
+      df23$P23ST.A[i] <- 0.33
+    } else if (df23$P23ST.A[i] == 4) {  # very unfavorable 
+      df23$P23ST.A[i] <- 0
+    } else {
+      df23$P23ST.A[i] <- NA
+    }
+}
+
+# level of devotion: S1A 
+for (i in 1:nrow(df23)) { # recode so it is on scale from 0 - 1
+  if (df23$S1A[i] == 1) { # very devout
+    df23$S1A[i] <- 1
+  } else if (df23$S1A[i] == 2) { 
+    df23$S1A[i] <- 0.67
+  } else if (df23$S1A[i] == 3) { 
+    df23$S1A[i] <- 0.33
+  } else if (df23$S1A[i] == 4) {  # not devout at all
+    df23$S1A[i] <- 0
+  } else {
+    df23$S1A[i] <- NA
+  }
+}
+
+# REEEDUC.1 : education
+df23$REEEDUC.1[df23$REEEDUC.1 < 0 | df23$REEEDUC.1 ==0] <- NA
+
+# S24 : socioeconmic status
+# before: 1:very good - 5: very bad
+# after: 0: very bad - 1: very good
+# 1 = 1, 2 = .75, 3 = .5, 4 = .25, 5 = 0,
+df23$S24[df23$S24 == 5] <- 0 # very bad
+df23$S24[df23$S24 == 4] <- 0.25 # bad
+df23$S24[df23$S24 == 3] <- 0.5 # avg
+df23$S24[df23$S24 == 2] <- 0.75 # good
+df23$S24[df23$S24 == 1] <- 1 # very good
+
+# country
+df23$idenpa[df23$idenpa == 32] <- "Argentina"
+df23$idenpa[df23$idenpa == 68] <- "Bolivia"
+df23$idenpa[df23$idenpa == 76] <- "Brasil"
+df23$idenpa[df23$idenpa == 152] <- "Chile"
+df23$idenpa[df23$idenpa == 170] <- "Colombia"
+df23$idenpa[df23$idenpa == 188] <- "Costa Rica"
+df23$idenpa[df23$idenpa == 214] <- "Rep. Dominicana"
+df23$idenpa[df23$idenpa == 218] <- "Ecuador"
+df23$idenpa[df23$idenpa == 222] <- "El Salvador"
+df23$idenpa[df23$idenpa == 320] <- "Guatemala"
+df23$idenpa[df23$idenpa == 340] <- "Honduras"
+df23$idenpa[df23$idenpa == 484] <- "México"
+df23$idenpa[df23$idenpa == 558] <- "Nicaragua"
+df23$idenpa[df23$idenpa == 591] <- "Panamá"
+df23$idenpa[df23$idenpa == 600] <- "Paraguay"
+df23$idenpa[df23$idenpa == 604] <- "Perú"
+df23$idenpa[df23$idenpa == 858] <- "Uruguay"
+df23$idenpa[df23$idenpa == 862] <- "Venezuela"
+names(df23)[names(df23) == 'idenpa'] <- 'country' # rename col name
+
+```
+
+```{r}
+# other misc variables
+
+# opinion of D Trump
+# df23$P62ST.10
+summary(df23$P62ST.10)
+
+for (i in 1:nrow(df23)) { # recode so it is on scale from 0 - 1
+    if (df23$P62ST.10[i] == 96 || df23$P62ST.10[i] == 99 || df23$P62ST.10[i] == 98 || df23$P62ST.10[i] < 0) {
+      df23$P62ST.10[i] <- NA
+    } else {
+      df23$P62ST.10[i] <- df23$P62ST.10[i] / 10
+    }
+}
+
+# opinion of Biden
+# df23$P62N.17
+for (i in 1:nrow(df23)) { # recode so it is on scale from 0 - 1
+    if (df23$P62N.17[i] == 96 || df23$P62N.17[i] == 99 || df23$P62N.17[i] == 98 || df23$P62N.17[i] < 0) {
+      df23$P62N.17[i] <- NA
+    } else {
+      df23$P62N.17[i] <- df23$P62N.17[i] / 10
+    }
+}
+
+# political leaning: df23$P16ST
+# 0 = left, 10 = right
+for (i in 1:nrow(df23)) {
+  if (df23$P16ST[i] < 0 || df23$P16ST[i] > 10) {
+    df23$P16ST[i] <- NA
+  }
+}
+
+# is democracy best? P18ST.A
+# 1 = strongly agree, 4 = strongly disagree
+for (i in 1:nrow(df23)) { # recode so it is on scale from 0 - 1
+  if (df23$P18ST.A[i] == 1) {
+    df23$P18ST.A[i] <- 1
+  } else if (df23$P18ST.A[i] == 2) {
+    df23$P18ST.A[i] <- 0.67
+  } else if (df23$P18ST.A[i] == 3) {
+    df23$P18ST.A[i] <- 0.33
+  } else if (df23$P18ST.A[i] == 4) {
+    df23$P18ST.A[i] = 0
+  } else {
+    df23$P18ST.A[i] <- NA
+  }
+}
+
+# P18STM.B "I wouldn't mind if an undemocratic government came to power if it can solve the problems 
+for (i in 1:nrow(df23)) { # recode so it is on scale from 0 - 1
+  if (df23$P18STM.B[i] == 1) { # strongly agree
+    df23$P18STM.B[i] <- 1
+  } else if (df23$P18STM.B[i] == 2) {
+    df23$P18STM.B[i] <- 0.67
+  } else if (df23$P18STM.B[i] == 3) {
+    df23$P18STM.B[i] <- 0.33
+  } else if (df23$P18STM.B[i] == 4) { # strongly disagree
+    df23$P18STM.B[i] = 0
+  } else {
+    df23$P18STM.B[i] <- NA
+  }
+}
+
+# P19N. Which of the two following statements is closer to your view?
+# 1. I prefer a society that defends our Traditions and habits (1)
+# 0. I Prefer a society that is open to a diversity of traditions and habits. (2)
+df23$P19N[df23$P19N != 1 & df23$P19N != 2] <- NA
+df23$P19N[df23$P19N == 2] <- 0
+          
+# P24ST.A : how would you rate the relations between (COUNTRY) and the United States? 
+df23$P24ST.A[df23$P24ST.A < 0 | df23$P24ST.A == 0 | df23$P24ST.A == 8] <- NA
+df23$P24ST.A[df23$P24ST.A == 4] <- 0 # very poor
+df23$P24ST.A[df23$P24ST.A == 3] <- 0.33 # fairly poor
+df23$P24ST.A[df23$P24ST.A == 2] <- 0.67 # fairly good
+
+# P37WVSCS.H : Homosexual couples are equally good parents as other couples
+df23$P37WVSCS.H[df23$P37WVSCS.H == 0 | df23$P37WVSCS.H < 0] <- NA
+df23$P37WVSCS.H[df23$P37WVSCS.H == 4] <- 0 # strongly disagree
+df23$P37WVSCS.H[df23$P37WVSCS.H == 3] <- 0.67
+df23$P37WVSCS.H[df23$P37WVSCS.H == 2] <- 0.33
+
+# P37CSN.B : marriage between ppl of the same sex
+df23$P37CSN.B[df23$P37CSN.B == 0 | df23$P37CSN.B < 0] <- NA
+df23$P37CSN.B[df23$P37CSN.B == 4] <- 0 # strongly disagree
+df23$P37CSN.B[df23$P37CSN.B == 3] <- 0.67
+df23$P37CSN.B[df23$P37CSN.B == 2] <- 0.33
+
+# P40STGBS : interest in politics
+df23$P40STGBS[df23$P40STGBS == 0 | df23$P40STGBS < 0] <- NA
+df23$P40STGBS[df23$P40STGBS == 4] <- 0 # not at all interested
+df23$P40STGBS[df23$P40STGBS == 3] <- 0.67 # a little
+df23$P40STGBS[df23$P40STGBS == 2] <- 0.33 # fairly
+
+write.csv(df23, "/Users/sierra/Documents/GitHub/sierrraw-psci3200-finalproj/data/Latinobarometer23_cleaned.csv", row.names=FALSE)
+
+```

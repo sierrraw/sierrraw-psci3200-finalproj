@@ -3,13 +3,13 @@ project:
   output-dir: docs
 
 website:
-  title: "sierrraw-psci3200-finalproj"
+  title: "PSCI3200 Final Project"
   navbar:
     left:
-      - href: index.qmd
-        text: Home
+      - href: project.qmd
+        text: Project
       - about.qmd
-      - project.qmd
+      
 
 format:
   html:

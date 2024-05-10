@@ -2,8 +2,5 @@
 title: "About"
 ---
 
-I am a human.
+I am a human woman.
 
-```{r}
-1 + 1
-```

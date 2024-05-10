@@ -1,9 +1,6 @@
 ---
-title: Sierra's Website :D
+title: Sierra's Website 
 ---
 
 
 
-```{r}
-1 + 1
-```

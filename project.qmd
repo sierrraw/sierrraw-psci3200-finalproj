@@ -91,7 +91,21 @@ The effect of being Mormon, a Jehovah's Witnesses, or Adventists and being more 
 
 ## 3. Research Design
 
-My data is using the Latinobarometer 2023. The unit of analysis is respondent and the sample is made up of at least 1000 respondents from 17 surveyed countries. In my analysis, I have only included individuals identifying as religious, in order perform a comparison across religious individuals.
+My research utilizes the Latinobarometer 2023. The unit of analysis is respondent and the sample is made up of at least 1000 respondents from 17 surveyed countries. In my analysis, I have only included individuals who identified as religious in order perform a comparison across religious individuals. I will be using the religion variable, favorability towards the US variable, education variable, and nationality variable. To test my hypothesis, I will use the following equation:
+
+$$
+Favorability\_towards\_USi = \alpha + \beta_1 Religion_{i} + \epsilon_i
+$$
+
+Additionally, I will be exploring how education and nationality affect favorability towards the US, in addition to religion. To do this, I will use the following equations:
+
+$$
+Favorability\_towards\_USi = \alpha + \beta_1 Religion_{i} + \beta_2 Education_{i} + \beta_3 (Religion_{i} * Education_{i}) + \epsilon_i
+$$
+
+$$
+Favorability\_towards\_USi = \alpha + \beta_1 Religion_{i} + \beta_2 Nationality_{i} + \beta_3 (Religion_{i} * Nationality_{i})+ \epsilon_i
+$$
 
 #### Religion Variable
 
@@ -542,13 +556,13 @@ Lower levels of favorability from fringe Christians could be due to education. T
 
 For Catholics with low education, the average favorability towards US was 6.4. Compared to Catholics, individuals with a low education in a fringe Christian religion had a 0.106335 decrease in favorability. Among Catholics, when education level increases within the low education group, there is a 0.022583 increase in favorability. The difference in the effect of education level on fringe Christian individuals compared to Catholics is not significant. Compared to Evangelicals, fringe Christians with low level of education experience a 0.270 decrease in favorability. Among Evangelicals within the low education group, education level does not significant effect favorability. However, the effect of education level on fringe Christian individuals compared to Evangelicals is significant, with a change of 0.035.
 
-For medium education respondents, among Catholics and Evangelicals, an increase in education level does not significant effects favorability. The effect of fringe Christian identity was significant and compared to Catholics and Evangelicals, was found to decrease favorability by -1.064 and -1.099, respectively. There was also a significant effect of education level on fringe Christian individuals compared to Catholics Evangelicals, with a positive effect of 0.209 and 0.210. 
+For medium education respondents, among Catholics and Evangelicals, an increase in education level does not significant effects favorability. The effect of fringe Christian identity was significant and compared to Catholics and Evangelicals, was found to decrease favorability by -1.064 and -1.099, respectively. There was also a significant effect of education level on fringe Christian individuals compared to Catholics Evangelicals, with a positive effect of 0.209 and 0.210.
 
-Finally, for high education respondents, none of the variables or interaction terms was found to significantly effect favorability towards the US. 
+Finally, for high education respondents, none of the variables or interaction terms was found to significantly effect favorability towards the US.
 
-These results suggest that among low education respondents, being in a fringe religion decreases favorability, compared to both Catholics and Evangelicals. An increase in education among low education respondents had a significant but small effect on Catholics and Evangelicals. For individuals in a fringe Christian religion with low education, an increase in education does increase favorability compared to Evangelicals. Among individuals with a medium education, an increase in education does not increase favorability for Catholics and Evangelicals. However, for those in a fringe Christian religion with medium education, an increase in education does increase favorability. Individuals' favorability towards of US in the high education group was not significantly affected by any of these variables. 
+These results suggest that among low education respondents, being in a fringe religion decreases favorability, compared to both Catholics and Evangelicals. An increase in education among low education respondents had a significant but small effect on Catholics and Evangelicals. For individuals in a fringe Christian religion with low education, an increase in education does increase favorability compared to Evangelicals. Among individuals with a medium education, an increase in education does not increase favorability for Catholics and Evangelicals. However, for those in a fringe Christian religion with medium education, an increase in education does increase favorability. Individuals' favorability towards of US in the high education group was not significantly affected by any of these variables.
 
-Overall, compared to low and medium education respondents, fringe Christian individuals had significantly lower favorability ratings. We see that for individuals with a medium education and in a fringe Christian religion, an increase in education increases favorability. Therefore, religion plays a significant role in favorability beliefs for people with a low and medium education, and if an individual already has medium education and they are in a fringe Christian relgion, more education can increase their favorability. For people with a high education, the ability of additional education or religion to significant affect one's political beliefs is decreased. 
+Overall, compared to low and medium education respondents, fringe Christian individuals had significantly lower favorability ratings. We see that for individuals with a medium education and in a fringe Christian religion, an increase in education increases favorability. Therefore, religion plays a significant role in favorability beliefs for people with a low and medium education, and if an individual already has medium education and they are in a fringe Christian relgion, more education can increase their favorability. For people with a high education, the ability of additional education or religion to significant affect one's political beliefs is decreased.
 
 ```{r}
 #| echo: false

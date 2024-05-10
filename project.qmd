@@ -61,7 +61,9 @@ df_e$christian_small[df_e$S1 == 2] <- 0
 
 ## 1. Introduction
 
-I am interested in studying how Christian fringe religions in Latin America, namely Mormons, Jehovah's Witnesses, and Adventists, view the US. I am not religious and I do not agree with many of the actions and beliefs of these religions However, I have compassion for people in them because these religions often function as cults. Mormons, Jehovah's Witnesses, and Adventists are similar in that they are relatively recent offshoots of Christianity that require a high degree of devotion from its followers. They all originated in the US in the 19th century and missionary efforts from these religions have successfully converted millions in Latin America. In the US, members of these religions hold different views from traditional mainstream Christian beliefs. Mormons overwhelmingly vote Republican, but Utah (over 60% Mormon) residents support issues like gun reform, the ERA, and increased sexual education [@Larsen_2022]. Jehovah's Witnesses in the US are conservative, but tend to remain political inactive [@Lipka_2016]. Meanwhile, Adventists, one of the most devout religious groups in the US, have varied political beliefs [@Lipka_2015].
+I am interested in studying how Christian fringe religions in Latin America, namely Mormons, Jehovah's Witnesses, and Adventists, view the US. I am not religious and I do not agree with many of the actions and beliefs of these religions However, I have compassion for people in them because these religions often function as cults. Mormons, Jehovah's Witnesses, and Adventists are similar in that they are relatively recent offshoots of Christianity that require a high degree of devotion from its followers. Jehovah's Witnesses developed within the Adventist movement in the 19th century in the US [@Melton_2024]. Missionary efforts from these religions have successfully converted millions in Latin America. 
+
+In the US, members of these religions hold different views from traditional mainstream Christian beliefs. Mormons overwhelmingly vote Republican, but Utah (over 60% Mormon) residents support issues like gun reform, the ERA, and increased sexual education [@Larsen_2022]. Jehovah's Witnesses in the US are conservative, but tend to remain politically inactive [@Lipka_2016].  Adventists are one of the most devout religious groups in the US but have varied political beliefs [@Lipka_2015].
 
 I am interested in whether or not some of these political beliefs are transferred to converts in Latin America. This paper aims to to study these religions as a group in comparison to the dominant religion, Catholicism, as well as Evangelical Christianity.
 
@@ -69,7 +71,11 @@ In Latin America, the influence of religious institutions and rates of religious
 
 While the influence of the Catholic Church was decreasing, religions like Mormonism surged in Latin America. Mormons grew from around 700,000 in 1980 to 4.5 million in 2004 (making up over a third of the worldwide Mormon population at the time). One recent convert remarked: "Mormonism is an American form of Christianity in that it represents all of the American values of self-discipline and self-reliance" [@Ayala_2004]. Most members are concentrated in Argentina, Brazil, Chile, Ecuador, Guatemala, Mexico, and Peru. However, within these countries, Mormon membership is unevenly distributed due to political, social, and cultural factors that affect the populace's engagement with the religion. Mormonism is also concentrated in urban areas (similar to in the US) and is described as having a "middle class" character to its structure and values. Most Mormon leaders are a mix of Latin Americans and non-Latin Americans and come from the middle or upper class, since becoming a leader requires intense time and education commitments [@knowlton1996mormonism].
 
-Literature on the growth of Jehovah's Witnesses and Adventists in Latin America is scarce. In studies of Pentecostal converts in Guatemala, researchers saw that "pentecostalized religious beliefs and charismatic experiences" across religious affiliations in Guatemala appear to be the most important religious factors driving political attitudes and actions [@steigenga2007conversion]. I seek to further investigate how religion affects one's beliefs.
+As of 2021, there are over 2 million Seventh Day Adventists in Argentina, Bolivia, Brazil, Chile, Ecuador, Paraguay, Peru, and Uruguay, making up the South American Division. Throughout much of the 20th century, Adventists in these countries were led by North Americans. From the mid 1970s onwards, the leaders have all been Brazilian [@Holdorf_2021]. The Inter-American Division of the Seventh Day Adventists includes Mexico, Belize, Colombia, Dominican Republic, El Salvador, French Guiana, Honduras, Nicaragua, Panama, Suriname, Venezuela, and other islands in the Caribbean. As of 2020, this division reported over 3.8 million members. Out of the 13 global Seventh Day Adventist divisions, the Inter-American Division is one of the largest and fastest growing divisions [@Phillips_Leito_2020].
+
+In studies of Pentecostal converts in Guatemala, researchers saw that "pentecostalized religious beliefs and charismatic experiences" across religious affiliations in Guatemala appear to be the most important religious factors driving political attitudes and actions [@steigenga2007conversion]. I seek to further investigate how religion affects one's beliefs.
+
+
 
 ## 2. Theory and Hypotheses
 
@@ -186,8 +192,8 @@ df$edu2[df$REEEDUC.1 == 2] <- "2 (Incomplete basic education)"
 df$edu2[df$REEEDUC.1 == 3] <- "3 (Complete basic education)"
 df$edu2[df$REEEDUC.1 == 4] <- "4 (Incomplete secondary education)"
 df$edu2[df$REEEDUC.1 == 5] <- "5 (Complete secondary education)"
-df$edu2[df$REEEDUC.1 == 6] <- "6 (Incomplete Universitary education)"
-df$edu2[df$REEEDUC.1 == 7] <- "7 (Complete Universitary education)"
+df$edu2[df$REEEDUC.1 == 6] <- "6 (Incomplete University education)"
+df$edu2[df$REEEDUC.1 == 7] <- "7 (Complete University education)"
 
 sum_edu2 <- as_flextable(table(df$edu2)) 
 sum_edu2 %>%
@@ -205,12 +211,47 @@ sum_edu2 %>%
 ```{r}
 #| echo: false
 #| output: true
+
 country_table <- as_flextable(table(df$country)) 
 country_table %>%
   set_header_labels(country_table, # rename cols
   Var1 = "Country")
 
 ```
+
+```{r}
+#| echo: false
+#| output: true
+
+#religious make up by country
+country_all <- unique(df$country)
+
+country_df <- data.frame(matrix(NA, 17, 7))
+colnames(country_df) <- c("Country", "Catholic", "Percent2", "Evangelical", "Percent3", "Fringe Christian", "Percent4")
+
+country_t <- data.frame(table(df$country))
+
+country_df$Country <- country_all
+
+for (i in 1:length(country_all)) {
+  country_df$Catholic[i] <- sum(df$christian_small[df$country == country_all[i]] == 0, na.rm = TRUE)
+  country_df$Evangelical[i] <- sum(df$christian_small_e[df$country == country_all[i]] == 0, na.rm = TRUE)
+  country_df$`Fringe Christian`[i] <- sum(df$christian_small[df$country == country_all[i]] == 1, na.rm = TRUE)
+  country_df$Percent2[i] <- round((country_df$Catholic[i] / sum(df$religion == "catholic", na.rm = TRUE)), 3) * 100
+  country_df$Percent3[i] <- round((country_df$Evangelical[i] / sum(df$religion == "evangelical", na.rm = TRUE)), 3) * 100
+  country_df$Percent4[i] <- round((country_df$`Fringe Christian`[i] / sum(df$christian_small == 1, na.rm = TRUE)), 3) * 100
+}
+
+country_table2 <- flextable(country_df) 
+country_table2 %>%
+  set_header_labels(country_table2, # rename cols
+    Percent2 = "Percent",
+    Percent3 = "Percent",
+    Percent4 = "Percent") %>%
+  width(j = "Fringe Christian", 0.5)
+
+```
+
 
 ## 4. Findings
 
@@ -321,7 +362,7 @@ ggplot(p2, aes(x = factor(favorability, level=c('Very unfavorable', 'Somewhat un
 
 Individuals in Christian fringe religions are 0.22 standard deviations less favorable towards the US compared to Catholics and 0.38 standard deviations less favorable compared to Evangelicals and these effects are both significant.
 
-This means that being in a fringe Christian group lowers the probability that an individual will have a favorable opinion towards the US, opposing Hypothesis 1. In fact, the data shows that compared to Catholics and Evangelicals, Mormons, Jehovah's Witnesses, and Adventists are less favorable towards the US. This could be explained by other factors, such as nationality or education level.
+This means that being in a fringe Christian group lowers the probability that an individual will have a favorable opinion towards the US, opposing Hypothesis 1. In fact, the data shows that compared to Catholics and Evangelicals, Mormons, Jehovah's Witnesses, and Adventists are less favorable towards the US. This could be explained by other factors, such as nationality or education level. The rest of this paper will attempt to answer why fringe Christians are less favorable towards the US compared to Catholics and Evangelicals. 
 
 ```{r}
 #| echo: false
@@ -344,7 +385,6 @@ modelsummary(models_a,
 #| output: false
 
 # find avg opinion towards US by country
-country_all <- unique(df$country)
 remove <- c("Costa Rica", "Rep. Dominicana", "El Salvador", "Guatemala", 'Honduras', 'Panamá')
 country <- country_all[!(country_all %in% remove)]
 # ountry[order(fav$avg_fav_us)]
@@ -368,29 +408,8 @@ diff2 <- avg_fav_us_small - avg_fav_us_cath
 diff3 <- avg_fav_us_small - avg_fav_us_evan
 
 fav <- data.frame(country_order, avg_fav_us, avg_fav_us_cath, avg_fav_us_evan, avg_fav_us_small, diff, diff2, diff3 )
-fav_a <- data.frame(country_order, avg_fav_us, avg_fav_us_cath, avg_fav_us_evan, avg_fav_us_small, diff, diff2, diff3 )
 
 fav2 <- fav[fav$country == "Bolivia" | fav$country == "Ecuador" | fav$country == "México" | fav$country == "Perú"| fav$country == "Venezuela",]
-
-```
-
-```{r}
-#| echo: false
-#| output: false
-
-summary(lm(P23ST.A ~ christian_small * country, data = df))
-summary(lm(P23ST.A ~ christian_small * venezuela, data = df))
-summary(lm(P23ST.A ~ christian_small * bolivia, data = df))
-summary(lm(P23ST.A ~ christian_small * peru, data = df))
-summary(lm(P23ST.A ~ christian_small * mexico, data = df)) # mexico is not sig
-summary(lm(P23ST.A ~ christian_small * ecuador, data = df))
-
-summary(lm(P23ST.A ~ christian_small_e * country, data = df))
-summary(lm(P23ST.A ~ christian_small_e * venezuela, data = df))
-summary(lm(P23ST.A ~ christian_small_e * bolivia, data = df))
-summary(lm(P23ST.A ~ christian_small_e * peru, data = df))
-summary(lm(P23ST.A ~ christian_small_e * mexico, data = df)) # mexico is not sig
-summary(lm(P23ST.A ~ christian_small_e * ecuador, data = df))
 
 ```
 
@@ -472,10 +491,10 @@ Depending on existing national attitudes, nationality may or may not significant
 ```{r}
 #| echo: false
 #| output: true
-fav_country_table <- flextable(fav_a)
+fav_country_table <- flextable(fav)
 fav_country_table %>% 
   set_header_labels(fav_country_table, # rename cols
-  country = "Country",
+  country_order = "Country",
   avg_fav_us = "National Average",
   avg_fav_us_small = "Fringe Christian National Average",
   avg_fav_us_cath = "Catholic National Average",
@@ -552,7 +571,7 @@ summary(lm(P23ST.A ~ christian_small * REEEDUC.1, data = edu_high))
 
 ```
 
-Lower levels of favorability from fringe Christians could be due to education. There is a large range of education levels in Latin America, and education, or lack thereof, significantly effects political beliefs. *maybe find a source* Therefore comparing favorability towards the US across different education levels is helpful to understand why those in fringe Christian groups have lower favorability.
+Lower levels of favorability from fringe Christians could be due to education. There is a large range of education levels in Latin America, and education, or lack thereof, significantly effects political beliefs. *maybe find a source* Additionally, fringe Christians, Catholics, and Evangelicals have a similar average level of education. The median member of all of these groups has some secondary education. Therefore comparing favorability towards the US across different education levels is helpful to understand why those in fringe Christian groups have lower favorability.
 
 For Catholics with low education, the average favorability towards US was 6.4. Compared to Catholics, individuals with a low education in a fringe Christian religion had a 0.106335 decrease in favorability. Among Catholics, when education level increases within the low education group, there is a 0.022583 increase in favorability. The difference in the effect of education level on fringe Christian individuals compared to Catholics is not significant. Compared to Evangelicals, fringe Christians with low level of education experience a 0.270 decrease in favorability. Among Evangelicals within the low education group, education level does not significant effect favorability. However, the effect of education level on fringe Christian individuals compared to Evangelicals is significant, with a change of 0.035.
 
@@ -768,5 +787,19 @@ summary(lm(P23ST.A ~ S1A, data = df))
 ```
 
 ## 6. Discussion and Policy Implications
+
+Favorability towards the US varies widely across Latin America. One of the strongest predictors of favorability in Latin America is distance from the US, meaning the individuals in Central America are more favorable than individuals in South America. The next most important factor is receiving money from US emigrants [@TheEconomist_2016]. This shows that proximity and perceived economic benefit play a large role in favorability of the US.
+
+Additionally, national politics also seem to affect the popularity of the US. Countries previously or currently governed by leftists, such as Venezuela or Bolivia, are more likely to disfavor the US than countries governed by conservatives, such as Peru or Colombia. In Latin American countries with high murder rates, typically associated with drug shipments to the north, favorability is also lower [@TheEconomist_2016].
+
+However, this does not explain why as a whole, Mormons, Jehovah's Witnesses, and Adventists tend to view the US less favorably. 
+
+In the US, increased education was found to increase religious attendance at the individual level, but  decrease religious beliefs [@glaeser2008education]. In Canada,  researchers found that higher levels of education lead to lower levels of religious affiliation later in life [@hungerman2014effect]. In my research, the beliefs of respondents with some university education were not significantly affected by either an increase in education or joining a fringe Christian religion. However, these results are still difficult to explain.
+
+
+This also shows that looking at Latin American countries together might not be effective to find trends in political beliefs. 
+
+In regards to policymaking, this research shows that religion continues to influence opinions and people of different religions also may have significantly different beliefs. Although most religious institutions and religious leaders do not explicitly espouse political ideals, the mindset and actions that religions promote have the potential to permeate through all aspects of one's life. Rather than just the 
+
 
 ## Bibliography

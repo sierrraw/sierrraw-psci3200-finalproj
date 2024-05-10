@@ -1,10 +1,12 @@
 ---
-title: "Project"
+title: "Final Project"
 author: "Sierra Wei"
 
 institute: "University of Pennsylvania"
 date: last-modified
 toc: true
+
+bibliography: references.bib
 
 format: 
  html:
@@ -14,6 +16,743 @@ editor: source
 ---
 
 ```{r}
-1 + 1
+#| echo: false
+#| output: false
+
+library(tidyverse)
+library(ggplot2)
+library("ggdag")
+library(dplyr)
+library("gt")
+library(modelsummary)
+library("ggpubr")
+library("wesanderson")
+library(flextable)
+
 ```
 
+```{r}
+#| echo: false
+#| output: false
+
+df_raw <- read.csv("/Users/sierra/Documents/GitHub/sierrraw-psci3200-finalproj/data/Latinobarometer23_cleaned.csv")
+
+# only keep religious ppl
+df <- df_raw[df_raw$S1 != 96 & df_raw$S1 != 14 & df_raw$S1 != 13 & df_raw$S1 != 97 & df_raw$S1 !=98,]
+
+# countries with largest amt of small_christian respondents (over 20):
+# bolivia, ecuador, mexico, peru, venezuela
+df$bolivia <- 0
+df$bolivia[df$country == "Bolivia"] <- 1
+df$ecuador <- 0
+df$ecuador[df$country == "Ecuador"] <- 1
+df$mexico <- 0
+df$mexico[df$country == "México"] <- 1
+df$peru <- 0
+df$peru[df$country == "Perú"] <- 1
+df$venezuela <- 0
+df$venezuela[df$country == "Venezuela"] <- 1
+
+# create df for evan vs small christian
+df_e <- df[df$S1 == 2 | df$christian_small == 1,]
+df_e$christian_small[df_e$S1 == 2] <- 0
+
+```
+
+## 1. Introduction
+
+I am interested in studying how Christian fringe religions in Latin America, namely Mormons, Jehovah's Witnesses, and Adventists, view the US. I am not religious and I do not agree with many of the actions and beliefs of these religions However, I have compassion for people in them because these religions often function as cults. Mormons, Jehovah's Witnesses, and Adventists are similar in that they are relatively recent offshoots of Christianity that require a high degree of devotion from its followers. They all originated in the US in the 19th century and missionary efforts from these religions have successfully converted millions in Latin America. In the US, members of these religions hold different views from traditional mainstream Christian beliefs. Mormons overwhelmingly vote Republican, but Utah (over 60% Mormon) residents support issues like gun reform, the ERA, and increased sexual education [@Larsen_2022]. Jehovah's Witnesses in the US are conservative, but tend to remain political inactive [@Lipka_2016]. Meanwhile, Adventists, one of the most devout religious groups in the US, have varied political beliefs [@Lipka_2015].
+
+I am interested in whether or not some of these political beliefs are transferred to converts in Latin America. This paper aims to to study these religions as a group in comparison to the dominant religion, Catholicism, as well as Evangelical Christianity.
+
+In Latin America, the influence of religious institutions and rates of religious participation have declined in the past few decades. With the rise of Protestantism (of which Evangelicalism is a subgroup), Pentecostal Evangelicalism, and fringe American Christian religions (Seventh Day Adventists, Jehovah's Witnesses, and Mormonism) from the mid 1800s onward, the long-dominant Catholic Church found itself struggling for continued influence. After several failed strategies to renew Catholic fervor, the Catholic Church began a new effort to sever ties with the political elite and refocus on helping the rural and urban poor [@gill1998rendering]. In the 1960s and 1980s in some Latin American countries like Brazil, Chile, and Argentina, the Catholic Church stood against dictatorships and promoted democracy. After this period of authoritarian rule subsided, the Catholic Church again found increased religious competition and became more unified and cautious in their political messaging [@jelen2002religion]. Today, Latin America's religious landscape is still 69% Catholic, however, this is less Catholic than in previous decades and the number of Protestants and Unaffiliated individuals has grown. On average, Catholics are also less devout than Protestants [@Lipka_2014].
+
+While the influence of the Catholic Church was decreasing, religions like Mormonism surged in Latin America. Mormons grew from around 700,000 in 1980 to 4.5 million in 2004 (making up over a third of the worldwide Mormon population at the time). One recent convert remarked: "Mormonism is an American form of Christianity in that it represents all of the American values of self-discipline and self-reliance" [@Ayala_2004]. Most members are concentrated in Argentina, Brazil, Chile, Ecuador, Guatemala, Mexico, and Peru. However, within these countries, Mormon membership is unevenly distributed due to political, social, and cultural factors that affect the populace's engagement with the religion. Mormonism is also concentrated in urban areas (similar to in the US) and is described as having a "middle class" character to its structure and values. Most Mormon leaders are a mix of Latin Americans and non-Latin Americans and come from the middle or upper class, since becoming a leader requires intense time and education commitments [@knowlton1996mormonism].
+
+Literature on the growth of Jehovah's Witnesses and Adventists in Latin America is scarce. In studies of Pentecostal converts in Guatemala, researchers saw that "pentecostalized religious beliefs and charismatic experiences" across religious affiliations in Guatemala appear to be the most important religious factors driving political attitudes and actions [@steigenga2007conversion]. I seek to further investigate how religion affects one's beliefs.
+
+## 2. Theory and Hypotheses
+
+#### Hypothesis 1
+
+Mormons, Jehovah's Witnesses, and Adventists will think more highly of the US than the mainstream Christian population.
+
+Because these religions all originated in the US and most people in these religions in Latin America will be converts, I hypothesize they will have more positive exposure to Americans and US beliefs. This is because people in these religions will be more likely to have had exposure to Americans through missionaries and if they think positively of the religion, they may associate this with positive feelings towards America, where such religions originated. Influential members of these religions are also Americans, which may increase this effect. Therefore, they will be more favorable towards the US than the average person in a mainstream Christian religion.
+
+#### Hypothesis 2
+
+Mormons, Jehovah's Witnesses, and Adventists with lower education levels will have lower favorability of the US compared to those with higher education.
+
+#### Hypothesis 3
+
+Mormons, Jehovah's Witnesses, and Adventists who are more devout will have more favorable opinions of the US.
+
+The effect of being Mormon, a Jehovah's Witnesses, or Adventists and being more devoted to religion will increase the likelihood that someone will be favorable towards the US. As people become more devoted to their religion, their engagement with American ideas and individuals may increase, which increases their favorability towards America as a whole. For example, they may wish to learn about church history, which took place in the US, and gain more understanding of the US as a whole. This could increase their favorability of the US.
+
+## 3. Research Design
+
+My data is using the Latinobarometer 2023. The unit of analysis is respondent and the sample is made up of at least 1000 respondents from 17 surveyed countries. In my analysis, I have only included individuals identifying as religious, in order perform a comparison across religious individuals.
+
+#### Religion Variable
+
+Over half of respondents identified as Catholic in the religion question, the second most popular response was Evangelical. I have removed participants who responded as Atheist, Agnostic, or None in later parts of my analysis order to focus on those who identify as religious in some way. For my analysis, I created a Fringe Christian religion variable with Adventists, Jehovah's Witnesses, Mormóns.
+
+```{r}
+#| echo: false
+#| output: true
+
+rel_table <- as_flextable(table(df_raw$religion))
+rel_table %>% set_header_labels(rel_table, # rename cols
+  Var1 = "Religion") %>% 
+  style(i = c(1, 6, 7, 12, 13), pr_t = fp_text_default(color = "#4E84C4")) 
+
+```
+
+#### Opinions Towards the US Variable
+
+When Latin Americans were asked about their opinions towards the US, 8.3% answered "Very unfavorable," 12.4% responded "Unfavorable," 46.8% of religious respondents answered "Favorable," and 25.9% responded "Very favorable." The median respondent is "Favorable".
+
+```{r}
+#| echo: false
+#| output: true
+
+# find avg, sd, and range
+sum <- c("Mean", "Standard Deviation", "Range")
+sum_fav_val <- c(round(mean(df$P23ST.A, na.rm = TRUE), 2), 
+                round(sd(df$P23ST.A, na.rm = TRUE), 2), 
+                "0 (Very unfavorable) \n1 (Very favorable)")
+sum_fav <- data.frame(sum, sum_fav_val)
+
+# flextable for overall fav
+fav_table <- flextable(sum_fav) 
+fav_table %>%  set_header_labels(fav_table, # rename cols
+  sum = "Statistic",
+  sum_fav_val = "Value")
+
+# flextable by favorability level
+df$fav_us <- df$P23ST.A
+df$fav_us[df$P23ST.A == 0] <- '0.00 (Very unfavorable)'
+df$fav_us[df$P23ST.A == 0.33] <- "0.33 (Unfavorable)"
+df$fav_us[df$P23ST.A == 0.67] <- "0.67 (Favorable)"
+df$fav_us[df$P23ST.A == 1] <- "1.00 (Very favorable)"
+
+fav_table2 <- as_flextable(table(df$fav_us))
+fav_table2 %>% set_header_labels(fav_table2, # rename cols
+  Var1 = "Favorability Level")
+
+
+
+
+```
+
+#### Education Variable
+
+I will be using the education variable as a covariate to test if education is a potential confounder. Levels of education range from illiterate to a completed university education. 36% of respondents have education ranging from illiterate to basic (light blue), 41% have some or a completed secondary education (medium blue), and 23% have some or a completed university education (dark blue). The median respondent has a complete secondary education.
+
+```{r}
+#| echo: false
+#| output: true
+
+# find avg, sd, and range
+sum_edu_val <- c(round(mean(df$REEEDUC.1, na.rm = TRUE), 2), 
+                round(sd(df$REEEDUC.1, na.rm = TRUE), 2), 
+                "1 (Illiterate) \n7 (Complete University Education)")
+sum_edu <- data.frame(sum, sum_edu_val)
+
+# flextable for overall fav
+sum_edu <- flextable(sum_edu) 
+sum_edu %>% set_header_labels(sum_edu, # rename cols
+  sum = "Statistic",
+  sum_fav_val = "Value") 
+
+# flextable by edu level
+df$edu2 <- NA
+df$edu2[df$REEEDUC.1 == 1] <- "1 (Illiterate)"
+df$edu2[df$REEEDUC.1 == 2] <- "2 (Incomplete basic education)"
+df$edu2[df$REEEDUC.1 == 3] <- "3 (Complete basic education)"
+df$edu2[df$REEEDUC.1 == 4] <- "4 (Incomplete secondary education)"
+df$edu2[df$REEEDUC.1 == 5] <- "5 (Complete secondary education)"
+df$edu2[df$REEEDUC.1 == 6] <- "6 (Incomplete Universitary education)"
+df$edu2[df$REEEDUC.1 == 7] <- "7 (Complete Universitary education)"
+
+sum_edu2 <- as_flextable(table(df$edu2)) 
+sum_edu2 %>%
+  set_header_labels(sum_edu2, # rename cols
+  Var1 = "Education Level") %>%  
+  style(i = c(1:3), pr_t = fp_text_default(color = "#bcd1f7")) %>% 
+  style(i = c(4:5), pr_t = fp_text_default(color = "#4E84C4")) %>% 
+  style(i = c(6:7), pr_t = fp_text_default(color = "#293352"))
+
+
+```
+
+#### Country
+
+```{r}
+#| echo: false
+#| output: true
+country_table <- as_flextable(table(df$country)) 
+country_table %>%
+  set_header_labels(country_table, # rename cols
+  Var1 = "Country")
+
+```
+
+## 4. Findings
+
+```{r}
+#| echo: false
+#| output: false
+#| warning: false
+
+# favorability of US vs religion
+summary(lm(P23ST.A ~ mormon, data = df))
+summary(lm(P23ST.A ~ jv, data = df)) # ***
+summary(lm(P23ST.A ~ adv, data = df)) # 
+
+summary(lm(P23ST.A ~ cath, data = df))
+summary(lm(P23ST.A ~ evan, data = df))
+
+# avg favorability 
+mean(df$P23ST.A[df$christian_small == 1], na.rm = TRUE) # 0.582
+
+# compared to cath
+mean(df$P23ST.A[df$cath == 1], na.rm = TRUE) # 0.647
+modelsummary(lm(P23ST.A ~ christian_small, data = df))
+coef_fav_christian_small <- summary(lm(P23ST.A ~ christian_small, data = df))$coefficients[2,1] 
+coef_fav_christian_small / sd(df$P23ST.A, na.rm = TRUE) # -0.2241585
+
+# compared to evan
+mean(df$P23ST.A[df$evan == 1], na.rm = TRUE) # 0.692
+modelsummary(lm(P23ST.A ~ christian_small_e, data = df))
+
+coef_fav_christian_small_e <- summary(lm(P23ST.A ~ christian_small_e, data = df))$coefficients[2,1] 
+coef_fav_christian_small_e / sd(df$P23ST.A, na.rm = TRUE) # -0.3793159
+
+```
+
+On average, Catholic and Evangelical Christians rated their favorability towards the US 6.4 and 6.9 respectively. Meanwhile, the average rating from individuals in a fringe Christian religion was a 5.8. Compared to Catholics and Evangelicals, Fringe Christians are more likely to have unfavorable towards the US. Among Fringe Christians, 63% of respondents had unfavorable opinions and 31% had favorable opinions. Among Catholics and Evangelicals, only 21% adn 18% had unfavorable opnions, respectively. Meanwhile, Evangelicals are most likely to have favorable opinions towards the US at 76%.
+
+```{r}
+#| echo: false
+#| output: true
+#| warning: false
+
+# hypothesis 1: Mormons, Jehovah's Witnesses, and Adventists will think more highly of the US than the mainstream Christian population.
+
+# make df for ggplot
+p <- data.frame(matrix(NA, nrow(df), 3))
+colnames(p) <- c("us_favorable", "christian_small", "christian_small_e")
+p$us_favorable <- df$P23ST.A
+p$christian_small <- df$christian_small
+p$christian_small_e <- df$christian_small_e
+
+# find % of ppl in each group that hold each favorability level 
+pct_us_favorable <- c(
+sum(p$christian_small[p$us_favorable == 0] == 1, na.rm = TRUE) / sum(p$christian_small == 1, na.rm = TRUE),
+sum(p$christian_small[p$us_favorable == 0.33] == 1, na.rm = TRUE) / sum(p$christian_small == 1, na.rm = TRUE),
+sum(p$christian_small[p$us_favorable == 0.67] == 1, na.rm = TRUE) / sum(p$christian_small == 1, na.rm = TRUE),
+sum(p$christian_small[p$us_favorable == 1] == 1, na.rm = TRUE) / sum(p$christian_small == 1, na.rm = TRUE),
+
+sum(p$christian_small[p$us_favorable == 0] == 0, na.rm = TRUE) / sum(p$christian_small == 0, na.rm = TRUE),
+sum(p$christian_small[p$us_favorable == 0.33] == 0, na.rm = TRUE) / sum(p$christian_small == 0, na.rm = TRUE),
+sum(p$christian_small[p$us_favorable == 0.67] == 0, na.rm = TRUE) / sum(p$christian_small == 0, na.rm = TRUE),
+sum(p$christian_small[p$us_favorable == 1] == 0, na.rm = TRUE) / sum(p$christian_small == 0, na.rm = TRUE),
+
+sum(p$christian_small_e[p$us_favorable == 0] == 0, na.rm = TRUE) / sum(p$christian_small_e == 0, na.rm = TRUE),
+sum(p$christian_small_e[p$us_favorable == 0.33] == 0, na.rm = TRUE) / sum(p$christian_small_e == 0, na.rm = TRUE),
+sum(p$christian_small_e[p$us_favorable == 0.67] == 0, na.rm = TRUE) / sum(p$christian_small_e == 0, na.rm = TRUE),
+sum(p$christian_small_e[p$us_favorable == 1] == 0, na.rm = TRUE) / sum(p$christian_small_e == 0, na.rm = TRUE))
+
+christian_group <- c("small", "small", "small", "small", 
+                     "catholic", "catholic", "catholic", "catholic", 
+                     "evangelical", "evangelical", "evangelical", "evangelical")
+favorability <- c(
+  "Very unfavorable", "Somewhat unfavorable", "Somewhat favorable", "Very favorable", 
+  "Very unfavorable", "Somewhat unfavorable", "Somewhat favorable", "Very favorable",
+  "Very unfavorable", "Somewhat unfavorable", "Somewhat favorable", "Very favorable")
+
+p2 <- data.frame(christian_group, favorability, pct_us_favorable)
+p2_a <- data.frame(c("small", "small",  
+                     "catholic", "catholic",  
+                     "evangelical", "evangelical"),
+                   c("unfavorable", "favorable", 
+                     "unfavorable", "favorable",
+                     "unfavorable", "favorable"),
+                   c(p2$pct_us_favorable[1] + p2$pct_us_favorable[2], 
+                     p2$pct_us_favorable[3] + p2$pct_us_favorable[4],
+                     p2$pct_us_favorable[5] + p2$pct_us_favorable[6],
+                     p2$pct_us_favorable[7] + p2$pct_us_favorable[8],
+                     p2$pct_us_favorable[9] + p2$pct_us_favorable[10],
+                     p2$pct_us_favorable[11] + p2$pct_us_favorable[12]))
+colnames(p2_a) <- c("group", "favorability", "pct")
+
+# graph
+ggplot(p2, aes(x = factor(favorability, level=c('Very unfavorable', 'Somewhat unfavorable', 'Somewhat favorable','Very favorable')), y= pct_us_favorable, fill = christian_group)) + 
+  geom_bar(stat="identity", position=position_dodge()) +
+  ggtitle("Favorability Towards the US by Christian Groups in Latin America") +
+  xlab("\nLevel of Favorability Towards the US") + ylab("Percentage\n") +
+  scale_fill_manual(name = "Religious Group", 
+                      labels = c("Catholic", "Evangelical", "Fringe Christian"),
+                      values = c("#FC4E07", "#FFDB6D", "#4E84C4")) +
+  theme(plot.caption = element_text(hjust = 0, face = "italic")) +
+  labs(caption = "Data source: Latinobarometer 2023. Individuals who answered agnostic, atheist or did not answer \non the religion question were removed.") +
+  scale_x_discrete(labels=c(
+    'Very favorable' = 'Very \nfavorable', 
+    'Somewhat favorable' = "Somewhat \nfavorable", 
+    'Somewhat unfavorable' = 'Somewhat \nunfavorable', 
+    'Very unfavorable' = 'Very \nunfavorable'))
+
+```
+
+Individuals in Christian fringe religions are 0.22 standard deviations less favorable towards the US compared to Catholics and 0.38 standard deviations less favorable compared to Evangelicals and these effects are both significant.
+
+This means that being in a fringe Christian group lowers the probability that an individual will have a favorable opinion towards the US, opposing Hypothesis 1. In fact, the data shows that compared to Catholics and Evangelicals, Mormons, Jehovah's Witnesses, and Adventists are less favorable towards the US. This could be explained by other factors, such as nationality or education level.
+
+```{r}
+#| echo: false
+#| output: true
+
+models_a <- list("Catholics" = lm(P23ST.A ~ christian_small, data = df), 
+               "Evangelicals" = lm(P23ST.A ~ christian_small, data = df_e))
+modelsummary(models_a,
+             estimate = "{estimate}",
+             statistic = c("p = {p.value}"))
+
+```
+
+## 5. Empirical Extension
+
+#### Country
+
+```{r}
+#| echo: false
+#| output: false
+
+# find avg opinion towards US by country
+country_all <- unique(df$country)
+remove <- c("Costa Rica", "Rep. Dominicana", "El Salvador", "Guatemala", 'Honduras', 'Panamá')
+country <- country_all[!(country_all %in% remove)]
+# ountry[order(fav$avg_fav_us)]
+country_order <- c("Venezuela", "Bolivia", "Argentina", "Uruguay", "Paraguay", "Perú", "México", "Brasil", "Chile", "Colombia", "Ecuador")
+
+avg_fav_us <- rep(NA, length(country))
+avg_fav_us_small <- rep(NA, length(country))
+
+avg_fav_us_cath <- rep(NA, length(country))
+avg_fav_us_evan <- rep(NA, length(country))
+
+for (i in 1:length(country_order)) {
+  avg_fav_us[i] <- mean(df$P23ST.A[df$country == country_order[i]], na.rm = TRUE)
+  avg_fav_us_small[i] <- mean(df$P23ST.A[df$country == country_order[i] & df$christian_small == 1], na.rm = TRUE)
+  avg_fav_us_cath[i] <- mean(df$P23ST.A[df$country == country_order[i] & df$christian_small == 0], na.rm = TRUE)
+  avg_fav_us_evan[i] <- mean(df$P23ST.A[df$country == country_order[i] & df$christian_small_e == 0], na.rm = TRUE)
+}
+
+diff <- avg_fav_us_small - avg_fav_us
+diff2 <- avg_fav_us_small - avg_fav_us_cath
+diff3 <- avg_fav_us_small - avg_fav_us_evan
+
+fav <- data.frame(country_order, avg_fav_us, avg_fav_us_cath, avg_fav_us_evan, avg_fav_us_small, diff, diff2, diff3 )
+fav_a <- data.frame(country_order, avg_fav_us, avg_fav_us_cath, avg_fav_us_evan, avg_fav_us_small, diff, diff2, diff3 )
+
+fav2 <- fav[fav$country == "Bolivia" | fav$country == "Ecuador" | fav$country == "México" | fav$country == "Perú"| fav$country == "Venezuela",]
+
+```
+
+```{r}
+#| echo: false
+#| output: false
+
+summary(lm(P23ST.A ~ christian_small * country, data = df))
+summary(lm(P23ST.A ~ christian_small * venezuela, data = df))
+summary(lm(P23ST.A ~ christian_small * bolivia, data = df))
+summary(lm(P23ST.A ~ christian_small * peru, data = df))
+summary(lm(P23ST.A ~ christian_small * mexico, data = df)) # mexico is not sig
+summary(lm(P23ST.A ~ christian_small * ecuador, data = df))
+
+summary(lm(P23ST.A ~ christian_small_e * country, data = df))
+summary(lm(P23ST.A ~ christian_small_e * venezuela, data = df))
+summary(lm(P23ST.A ~ christian_small_e * bolivia, data = df))
+summary(lm(P23ST.A ~ christian_small_e * peru, data = df))
+summary(lm(P23ST.A ~ christian_small_e * mexico, data = df)) # mexico is not sig
+summary(lm(P23ST.A ~ christian_small_e * ecuador, data = df))
+
+```
+
+National politics may also play a large role in the way that people think. By comparing favorability towards the US between individuals in fringe Christian religions and mainstream Catholics and Evangelicals, we attempt to distinguish what role nationality plays alongside religion. In this analysis, six countries (Costa Rica, Rep. Dominicana, El Salvador, Guatemala, Honduras, and Panamá) were removed due to insufficient data.
+
+The effects of nationality on favorability towards the US vary across countries. Average favorability towards the US is lowest in countries like Venezuela (5.4) and Bolivia (5.5) and highest in countries like Colombia (6.7) and Ecuador (7.2). In Venezuela and Mexico, there is a large difference between the national average favorability and the fringe Christian average favorability. Meanwhile in Ecuador, there is not a large difference between the national average favorability and the fringe Christian average favorability.
+
+```{r}
+#| echo: false
+#| output: true
+# graph favorability by country
+
+p_fav <- fav2 %>% pivot_longer(cols=c("avg_fav_us", "avg_fav_us_small"),
+                               names_to = 'Religious Group', values_to = "Favorability Towards the US")
+
+ggplot(p_fav, aes(x = factor(country_order, level=c('Venezuela', 'Bolivia', 'Perú', 'México', 'Ecuador')), 
+        y = `Favorability Towards the US`, 
+       fill = `Religious Group`)) + 
+  geom_bar(stat="identity", position=position_dodge()) +
+  ggtitle("Average Favorability Towards the US in Latin America") +
+  xlab("\nLevel of Favorability Towards the US") + ylab("Favorability\n") +
+  theme(plot.caption = element_text(hjust = 0, face = "italic")) +
+  scale_fill_manual(name = "Group", 
+                    labels = c("National Average", "Fringe Christian"), 
+                    values=c("#FC4E07", "#4E84C4")) +
+  labs(caption = "Data source: Latinobarometer 2023. Individuals who answered agnostic, atheist or did not answer \non the religion question were removed.") 
+
+```
+
+The effect of country may also vary depending on existing national attitudes. We see varied effects when looking at Venezuela (low favorability), Peru (moderate favorability), and Ecuador (high favorability).
+
+**Venezuela:** Venezuelan nationality by itself was associated with a 0.124310 decrease in favorability among Catholics and fringe Christians and a 0.154399 decrease in favorability among Evangelicals and fringe Christians. However, the effect of Venezuelan identity on fringe Christian individuals was not found to significantly effect favorability, compared to Catholics or compared to Evangelicals.
+
+```{r}
+#| echo: false
+#| output: true
+
+models <- list("Catholics" = lm(P23ST.A ~ christian_small * venezuela, data = df), 
+               "Evangelicals" = lm(P23ST.A ~ christian_small * venezuela, data = df_e))
+
+modelsummary(models,
+             estimate = "{estimate}",
+             statistic = c("p = {p.value}"))
+
+```
+
+**Peru:** When comparing Catholics and Fringe Christians, Peruvian nationality by itself was found to decrease a respondent's favorability by 0.037073. Peruvian identity had a positive effect of 0.137468 on favorability for fringe Christians, compared to Catholics.
+
+When comparing the effects of Peruvian nationality among Evangelicals and Fringe Christians, we see larger substantive effects. Peruvian identity by itself was found to decrease a respondent's favorability by 0.090138. Peruvian identity had a positive effect of 0.190533 on fringe Christian individuals, compared to Evangelicals.
+
+```{r}
+#| echo: false
+#| output: true
+models2 <- list("Catholics" = lm(P23ST.A ~ christian_small * peru, data = df), 
+               "Evangelicals" = lm(P23ST.A ~ christian_small * peru, data = df_e))
+
+modelsummary(models2,
+             estimate = "{estimate}",
+             statistic = c("p = {p.value}"))
+
+```
+
+**Ecuador:** Ecuadorean nationality had a significant positive effect of 0.083657 on favorability among fringe Christians and Catholics, but not among fringe Christians and Evangelicals. Ecuadorean nationality did not have a significant effect on fringe Christian individuals compared to Catholics. However, compared to Evangelicals, Ecuadorean nationality did have a positive effect of 0.158973 on fringe Christian individuals.
+
+```{r}
+#| echo: false
+#| output: true
+
+models3 <- list("Catholics" = lm(P23ST.A ~ christian_small * ecuador, data = df), 
+               "Evangelicals" = lm(P23ST.A ~ christian_small * ecuador, data = df_e))
+modelsummary(models3,
+             estimate = "{estimate}",
+             statistic = c("p = {p.value}"))
+
+```
+
+Depending on existing national attitudes, nationality may or may not significant effect favorability across Latin American countries. The interaction effect of country and religion was also not always found to be significant and also varied in magnitude. In some countries, nationality and religion did significantly affect favorability, however in other countries, only one or neither variable was found to be significant. This indicates large variability across Latin American and prompts further research into how national attitudes differ across Latin America.
+
+```{r}
+#| echo: false
+#| output: true
+fav_country_table <- flextable(fav_a)
+fav_country_table %>% 
+  set_header_labels(fav_country_table, # rename cols
+  country = "Country",
+  avg_fav_us = "National Average",
+  avg_fav_us_small = "Fringe Christian National Average",
+  avg_fav_us_cath = "Catholic National Average",
+  avg_fav_us_evan = "Evangelical National Average",
+  diff = "Difference (National Average)",
+  diff2 = "Difference (Catholic)",
+  diff3 = "Difference (Evangelical)")
+```
+
+#### Education
+
+```{r}
+#| echo: false
+#| output: false
+#| warning: false
+
+# new education variable
+df$edu <- NA
+df$edu[df$REEEDUC.1 == 1 | df$REEEDUC.1 == 2 | df$REEEDUC.1 == 3] <- "low"
+df$edu[df$REEEDUC.1 == 4 | df$REEEDUC.1 == 5] <- "medium"
+df$edu[df$REEEDUC.1 == 6 | df$REEEDUC.1 == 7] <- "high"
+
+df_e$edu <- NA
+df_e$edu[df_e$REEEDUC.1 == 1 | df_e$REEEDUC.1 == 2 | df_e$REEEDUC.1 == 3] <- "low"
+df_e$edu[df_e$REEEDUC.1 == 4 | df_e$REEEDUC.1 == 5] <- "medium"
+df_e$edu[df_e$REEEDUC.1 == 6 | df_e$REEEDUC.1 == 7] <- "high"
+
+# numeric education variable, 0 = low, 1 = high
+df$edu2 <- NA
+df$edu2[df$edu == "low"] <- 0 
+df$edu2[df$edu == "medium"] <- 0.5
+df$edu2[df$edu == "high"] <- 1
+
+# new df for each edu level
+edu_low <- df[df$edu == "low",]
+edu_medium <- df[df$edu == "medium",]
+edu_high <- df[df$edu == "high",]
+
+edu_low_e <- df_e[df_e$edu == "low",]
+edu_medium_e <- df_e[df_e$edu == "medium",]
+edu_high_e <- df_e[df_e$edu == "high",]
+
+
+nrow(edu_low) / nrow(df)
+nrow(edu_medium) / nrow(df)
+nrow(edu_high) / nrow(df)
+
+#edu2
+summary(lm(P23ST.A ~ christian_small * edu2, data = df)) # ***
+
+#low
+# edu level is significant for all of these
+summary(lm(P23ST.A ~ mormon + REEEDUC.1, data = edu_low))
+summary(lm(P23ST.A ~ jv + REEEDUC.1, data = edu_low)) # **
+summary(lm(P23ST.A ~ adv + REEEDUC.1, data = edu_low)) 
+summary(lm(P23ST.A ~ pent_evan + REEEDUC.1, data = edu_low)) # **
+summary(lm(P23ST.A ~ christian_small * REEEDUC.1, data = edu_low)) # **
+
+# medium
+# edu level is NOT significant for all of these
+summary(lm(P23ST.A ~ mormon + REEEDUC.1, data = edu_medium))
+summary(lm(P23ST.A ~ jv + REEEDUC.1, data = edu_medium)) # ***
+summary(lm(P23ST.A ~ adv + REEEDUC.1, data = edu_medium)) 
+summary(lm(P23ST.A ~ pent_evan + REEEDUC.1, data = edu_medium)) # *
+summary(lm(P23ST.A ~ christian_small * REEEDUC.1, data = edu_medium)) # **
+
+# high
+# edu level and religion is NOT significant for any of these
+summary(lm(P23ST.A ~ mormon + REEEDUC.1, data = edu_high))
+summary(lm(P23ST.A ~ jv + REEEDUC.1, data = edu_high)) 
+summary(lm(P23ST.A ~ adv + REEEDUC.1, data = edu_high)) 
+summary(lm(P23ST.A ~ pent_evan + REEEDUC.1, data = edu_high)) 
+summary(lm(P23ST.A ~ christian_small * REEEDUC.1, data = edu_high)) 
+
+```
+
+Lower levels of favorability from fringe Christians could be due to education. There is a large range of education levels in Latin America, and education, or lack thereof, significantly effects political beliefs. *maybe find a source* Therefore comparing favorability towards the US across different education levels is helpful to understand why those in fringe Christian groups have lower favorability.
+
+For Catholics with low education, the average favorability towards US was 6.4. Compared to Catholics, individuals with a low education in a fringe Christian religion had a 0.106335 decrease in favorability. Among Catholics, when education level increases within the low education group, there is a 0.022583 increase in favorability. The difference in the effect of education level on fringe Christian individuals compared to Catholics is not significant. Compared to Evangelicals, fringe Christians with low level of education experience a 0.270 decrease in favorability. Among Evangelicals within the low education group, education level does not significant effect favorability. However, the effect of education level on fringe Christian individuals compared to Evangelicals is significant, with a change of 0.035.
+
+For medium education respondents, among Catholics and Evangelicals, an increase in education level does not significant effects favorability. The effect of fringe Christian identity was significant and compared to Catholics and Evangelicals, was found to decrease favorability by -1.064 and -1.099, respectively. There was also a significant effect of education level on fringe Christian individuals compared to Catholics Evangelicals, with a positive effect of 0.209 and 0.210. 
+
+Finally, for high education respondents, none of the variables or interaction terms was found to significantly effect favorability towards the US. 
+
+These results suggest that among low education respondents, being in a fringe religion decreases favorability, compared to both Catholics and Evangelicals. An increase in education among low education respondents had a significant but small effect on Catholics and Evangelicals. For individuals in a fringe Christian religion with low education, an increase in education does increase favorability compared to Evangelicals. Among individuals with a medium education, an increase in education does not increase favorability for Catholics and Evangelicals. However, for those in a fringe Christian religion with medium education, an increase in education does increase favorability. Individuals' favorability towards of US in the high education group was not significantly affected by any of these variables. 
+
+Overall, compared to low and medium education respondents, fringe Christian individuals had significantly lower favorability ratings. We see that for individuals with a medium education and in a fringe Christian religion, an increase in education increases favorability. Therefore, religion plays a significant role in favorability beliefs for people with a low and medium education, and if an individual already has medium education and they are in a fringe Christian relgion, more education can increase their favorability. For people with a high education, the ability of additional education or religion to significant affect one's political beliefs is decreased. 
+
+```{r}
+#| echo: false
+#| output: true
+#| warning: false
+
+models_b <- list("Low Education, Catholic" = lm(P23ST.A ~ christian_small * REEEDUC.1, data = df), 
+               "Low Education, Evangelical" = lm(P23ST.A ~ christian_small * REEEDUC.1, data = df_e),
+               "Medium Education, Catholic" = lm(P23ST.A ~ christian_small * REEEDUC.1, data = edu_medium),
+               "Medium Education, Evangelical" = lm(P23ST.A ~ christian_small * REEEDUC.1, data = edu_medium_e),
+               "High Education, Catholic" = lm(P23ST.A ~ christian_small * REEEDUC.1, data = edu_high),
+               "High Education, Evangelical" = lm(P23ST.A ~ christian_small * REEEDUC.1, data = edu_high_e))
+modelsummary(models_b,
+             estimate = "{estimate}",
+             statistic = c("p = {p.value}"))
+
+
+```
+
+```{r}
+#| echo: false
+#| output: true
+#| warning: false
+
+# create p2 but with different 
+
+# make df for ggplot
+q <- data.frame(matrix(NA, nrow(df), 3))
+colnames(q) <- c("us_favorable", "christian_small", "edu")
+q$us_favorable <- df$P23ST.A
+q$christian_small <- df$christian_small
+q$edu <- df$edu
+
+# find % of ppl in each group that hold each favorability level 
+pct_us_favorable_2 <- c(
+sum(q$christian_small[q$us_favorable == 0 & q$edu == "low"] == 1, na.rm = TRUE) / 
+  sum(q$christian_small[q$edu == "low"] == 1, na.rm = TRUE),
+sum(q$christian_small[q$us_favorable == 0.33 & q$edu == "low"] == 1, na.rm = TRUE) / 
+  sum(q$christian_small[q$edu == "low"] == 1, na.rm = TRUE),
+sum(q$christian_small[q$us_favorable == 0.67 & q$edu == "low"] == 1, na.rm = TRUE) / 
+  sum(q$christian_small[q$edu == "low"] == 1, na.rm = TRUE),
+sum(q$christian_small[q$us_favorable == 1 & q$edu == "low"] == 1, na.rm = TRUE) / 
+  sum(q$christian_small[q$edu == "low"] == 1, na.rm = TRUE),
+
+sum(q$christian_small[q$us_favorable == 0 & q$edu == "medium"] == 1, na.rm = TRUE) / 
+  sum(q$christian_small[q$edu == "medium"] == 1, na.rm = TRUE),
+sum(q$christian_small[q$us_favorable == 0.33 & q$edu == "medium"] == 1, na.rm = TRUE) / 
+  sum(q$christian_small[q$edu == "medium"] == 1, na.rm = TRUE),
+sum(q$christian_small[q$us_favorable == 0.67 & q$edu == "medium"] == 1, na.rm = TRUE) / 
+  sum(q$christian_small[q$edu == "medium"] == 1, na.rm = TRUE),
+sum(q$christian_small[q$us_favorable == 1 & q$edu == "medium"] == 1, na.rm = TRUE) / 
+  sum(q$christian_small[q$edu == "medium"] == 1, na.rm = TRUE),
+
+sum(q$christian_small[q$us_favorable == 0 & q$edu == "high"] == 1, na.rm = TRUE) / 
+  sum(q$christian_small[q$edu == "high"] == 1, na.rm = TRUE),
+sum(q$christian_small[q$us_favorable == 0.33 & q$edu == "high"] == 1, na.rm = TRUE) / 
+  sum(q$christian_small[q$edu == "high"] == 1, na.rm = TRUE),
+sum(q$christian_small[q$us_favorable == 0.67 & q$edu == "high"] == 1, na.rm = TRUE) / 
+  sum(q$christian_small[q$edu == "high"] == 1, na.rm = TRUE),
+sum(q$christian_small[q$us_favorable == 1 & q$edu == "high"] == 1, na.rm = TRUE) / 
+  sum(q$christian_small[q$edu == "high"] == 1, na.rm = TRUE),
+
+sum(q$christian_small[q$us_favorable == 0] == 0, na.rm = TRUE) / 
+  sum(q$christian_small == 0, na.rm = TRUE),
+sum(q$christian_small[q$us_favorable == 0.33] == 0, na.rm = TRUE) / 
+  sum(q$christian_small == 0, na.rm = TRUE),
+sum(q$christian_small[q$us_favorable == 0.67] == 0, na.rm = TRUE) / 
+  sum(q$christian_small == 0, na.rm = TRUE),
+sum(q$christian_small[q$us_favorable == 1] == 0, na.rm = TRUE) / 
+  sum(q$christian_small == 0, na.rm = TRUE))
+
+legend <- c("1small_low", "1small_low", "1small_low", "1small_low", 
+            "2small_medium","2small_medium", "2small_medium", "2small_medium",
+            "3small_high", "3small_high", "3small_high", "3small_high",
+            "4large", "4large", "4large", "4large")
+
+favorability <- c(
+  "Very unfavorable", "Somewhat unfavorable", "Somewhat favorable", "Very favorable", 
+  "Very unfavorable", "Somewhat unfavorable", "Somewhat favorable", "Very favorable", 
+  "Very unfavorable", "Somewhat unfavorable", "Somewhat favorable", "Very favorable", 
+  "Very unfavorable", "Somewhat unfavorable", "Somewhat favorable", "Very favorable")
+
+q2 <- data.frame(legend, favorability, pct_us_favorable_2)
+
+# graph
+ggplot(q2, aes(x = factor(favorability, level=c('Very unfavorable','Somewhat unfavorable','Somewhat favorable', 'Very favorable')), y= pct_us_favorable_2, fill = legend)) + 
+  geom_bar(stat="identity", position=position_dodge()) +
+  ggtitle("Favorability Towards the US by Education Level in Latin America") +
+  xlab("\nLevel of Favorability Towards the US") + ylab("Percentage\n") +
+  scale_fill_manual(name = "Group", 
+                      labels = c("Fringe Christian, Low Education", "Fringe Christian, Medium Education", "Fringe Christian, High Education", "Catholic"),
+                      values=c("#bcd1f7","#4E84C4", "#293352","#FC4E07")) +
+  theme(plot.caption = element_text(hjust = 0, face = "italic")) +
+  labs(caption = "Data source: Latinobarometer 2023. Individuals who answered agnostic, atheist or did not answer \non the religion question were removed.")  + 
+  scale_x_discrete(labels=c(
+    'Very favorable' = 'Very \nfavorable', 
+    'Somewhat favorable' = "Somewhat \nfavorable", 
+    'Somewhat unfavorable' = 'Somewhat \nunfavorable', 
+    'Very unfavorable' = 'Very \nunfavorable'))
+  
+```
+
+#### Devotion ??
+
+```{r}
+#| echo: false
+#| output: false
+
+
+pct_us_favorable_3 <- c(
+sum(df$christian_small[df$P23ST.A == 0 & df$S1A == 0] == 1, na.rm = TRUE) / 
+  sum(df$christian_small[df$S1A == 0] == 1, na.rm = TRUE),
+sum(df$christian_small[df$P23ST.A == 0.33 & df$S1A == 0] == 1, na.rm = TRUE) / 
+  sum(df$christian_small[df$S1A == 0] == 1, na.rm = TRUE),
+sum(df$christian_small[df$P23ST.A == 0.67 & df$S1A == 0] == 1, na.rm = TRUE) / 
+  sum(df$christian_small[df$S1A == 0] == 1, na.rm = TRUE),
+sum(df$christian_small[df$P23ST.A == 1 & df$S1A == 0] == 1, na.rm = TRUE) / 
+  sum(df$christian_small[df$S1A == 0] == 1, na.rm = TRUE),
+
+sum(df$christian_small[df$P23ST.A == 0 & df$S1A == 0.33] == 1, na.rm = TRUE) / 
+  sum(df$christian_small[df$S1A == 00.33], na.rm = TRUE),
+sum(df$christian_small[df$P23ST.A == 0.33 & df$S1A == 0.33] == 1, na.rm = TRUE) / 
+  sum(df$christian_small[df$S1A == 0.33] == 1, na.rm = TRUE),
+sum(df$christian_small[df$P23ST.A == 0.67 & df$S1A == 0.33] == 1, na.rm = TRUE) / 
+  sum(df$christian_small[df$S1A == 0.33] == 1, na.rm = TRUE),
+sum(df$christian_small[df$P23ST.A == 1 & df$S1A == 0.33] == 1, na.rm = TRUE) / 
+  sum(df$christian_small[df$S1A == 0.33] == 1, na.rm = TRUE),
+
+sum(df$christian_small[df$P23ST.A == 0 & df$S1A == 0.67] == 1, na.rm = TRUE) / 
+  sum(df$christian_small[df$S1A == 0.67] == 1, na.rm = TRUE),
+sum(df$christian_small[df$P23ST.A == 0.33 & df$S1A == 0.67] == 1, na.rm = TRUE) / 
+  sum(df$christian_small[df$S1A == 0.67] == 1, na.rm = TRUE),
+sum(df$christian_small[df$P23ST.A == 0.67 & df$S1A == 0.67] == 1, na.rm = TRUE) / 
+  sum(df$christian_small[df$S1A == 0.67] == 1, na.rm = TRUE),
+sum(df$christian_small[df$P23ST.A == 1 & df$S1A == 0.67] == 1, na.rm = TRUE) / 
+  sum(df$christian_small[df$S1A == 0.67] == 1, na.rm = TRUE),
+
+sum(df$christian_small[df$P23ST.A == 0 & df$S1A == 1] == 1, na.rm = TRUE) / 
+  sum(df$christian_small[df$S1A == 1] == 1, na.rm = TRUE),
+sum(df$christian_small[df$P23ST.A == 0.33 & df$S1A == 1] == 1, na.rm = TRUE) / 
+  sum(df$christian_small[df$S1A == 1] == 1, na.rm = TRUE),
+sum(df$christian_small[df$P23ST.A == 0.67 & df$S1A == 1] == 1, na.rm = TRUE) / 
+  sum(df$christian_small[df$S1A == 1] == 1, na.rm = TRUE),
+sum(df$christian_small[df$P23ST.A == 1 & df$S1A == 1] == 1, na.rm = TRUE) / 
+  sum(df$christian_small[df$S1A == 1] == 1, na.rm = TRUE)
+)
+
+
+dev <- c("Not devout at all", "Not devout at all", "Not devout at all", "Not devout at all",
+         "Not very devout", "Not very devout", "Not very devout", "Not very devout",
+         "Devout", "Devout", "Devout", "Devout",
+         "Very devout", "Very devout", "Very devout", "Very devout")
+
+favorability <- c(
+  "Very unfavorable", "Somewhat unfavorable", "Somewhat favorable", "Very favorable", 
+  "Very unfavorable", "Somewhat unfavorable", "Somewhat favorable", "Very favorable", 
+  "Very unfavorable", "Somewhat unfavorable", "Somewhat favorable", "Very favorable", 
+  "Very unfavorable", "Somewhat unfavorable", "Somewhat favorable", "Very favorable")
+
+q3 <- data.frame(dev, favorability, pct_us_favorable_3)
+
+# graph
+ggplot(q3, aes(x = factor(favorability, level=c('Very unfavorable','Somewhat unfavorable','Somewhat favorable', 'Very favorable')), y= pct_us_favorable_3, fill = dev)) + 
+  geom_bar(stat="identity", position=position_dodge()) +
+  ggtitle("Favorability Towards the US by Devotion in Latin America") +
+  xlab("\nLevel of Favorability Towards the US") + ylab("Percentage\n") +
+  scale_fill_manual(name = "Group", 
+                      labels = c("Not devout at all", "Not very devout", "Devout", "Very devout"),
+                      values=c("#bcd1f7","#4E84C4", "#293352","#FC4E07")) +
+  theme(plot.caption = element_text(hjust = 0, face = "italic")) +
+  labs(caption = "Data source: Latinobarometer 2023. Individuals who answered agnostic, atheist or did not answer \non the religion question were removed.")  + 
+  scale_x_discrete(labels=c(
+    'Very favorable' = 'Very \nfavorable', 
+    'Somewhat favorable' = "Somewhat \nfavorable", 
+    'Somewhat unfavorable' = 'Somewhat \nunfavorable', 
+    'Very unfavorable' = 'Very \nunfavorable'))
+
+ggplot(q3, aes(x = dev, y= pct_us_favorable_3, fill = favorability)) + 
+  geom_bar(stat="identity", position=position_dodge()) +
+  ggtitle("Favorability Towards the US by Devotion in Latin America") +
+  xlab("\nLevel of Favorability Towards the US") + ylab("Percentage\n") +
+  scale_fill_manual(name = "Group",
+                    values=c("#bcd1f7","#4E84C4", "#293352","black")) +
+  theme(plot.caption = element_text(hjust = 0, face = "italic")) +
+  labs(caption = "Data source: Latinobarometer 2023. Individuals who answered agnostic, atheist or did not answer \non the religion question were removed.")  + 
+  scale_x_discrete(labels=c(
+    'Very favorable' = 'Very \nfavorable', 
+    'Somewhat favorable' = "Somewhat \nfavorable", 
+    'Somewhat unfavorable' = 'Somewhat \nunfavorable', 
+    'Very unfavorable' = 'Very \nunfavorable'))
+
+
+# test
+summary(lm(P23ST.A ~ christian_small * S1A, data = df))
+summary(lm(P23ST.A ~ christian_small_e * S1A, data = df))
+summary(lm(P23ST.A ~ christian_small, data = df))
+summary(lm(P23ST.A ~ christian_small_e, data = df))
+
+summary(lm(P23ST.A ~ S1A, data = df))
+
+
+
+```
+
+## 6. Discussion and Policy Implications
+
+## Bibliography

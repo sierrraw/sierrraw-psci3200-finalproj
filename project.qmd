@@ -971,6 +971,7 @@ theme_zebra(fav_country_table) %>%
 ```
 
 
+
 ## 6. Discussion and Policy Implications
 
 Being in a Fringe Christian religion was found to decrease an individual's favorability of the US, opposing my original hypothesis. 
@@ -983,7 +984,7 @@ The same study also found that political engagement mattered more than religiosi
 
 In my analysis, among those with low socioeconomic status, Fringe Christians had lower opinions of the US than Catholics and Evangelicals, and increased socioeconomic did increase favorability compared to Evangelicals. However, the socioeconomic status of all three groups were similar, so this variable does not help explain why Fringe Christians have a lower favorability.
 
-In the US, increased education was found to increase religious attendance at the individual level, but decrease religious beliefs [@glaeser2008education]. In Canada, researchers found that higher levels of education led to lower levels of religious affiliation later in life [@hungerman2014effect]. In my analysis, the beliefs of respondents with some university education were not significantly affected by either an increase in education or joining a Fringe Christian religion. However, these results are still difficult to explain.
+In the US, increased education was found to increase religious attendance at the individual level, but decrease religious beliefs [@glaeser2008education]. In Canada, researchers found that higher levels of education led to lower levels of religious affiliation later in life [@hungerman2014effect]. In my analysis, the beliefs of respondents with some university education were not significantly affected by either an increase in education or joining a Fringe Christian religion. Therefore, my results are challenging to explain.
 
 Holding constant education, devotion, and socioeconomic status, being in a Fringe Christian was still found to have a negative effect on favorability.
 

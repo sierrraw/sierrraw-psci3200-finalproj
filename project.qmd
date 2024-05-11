@@ -61,7 +61,7 @@ df_e$christian_small[df_e$S1 == 2] <- 0
 
 ## 1. Introduction
 
-Mormons, Jehovah's Witnesses, and Adventists, form a distinctive group in Latin America. These religions are all relatively recent offshoots of Christianity that require a high degree of devotion from its followers and missionary efforts from these religions have successfully converted millions in Latin America. I am interested in whether Fringe Christians in Latin America are more favorable to the US, as a result of this. This paper aims to to study Fringe Christians in comparison to the dominant religion, Catholicism, as well as Evangelical Christianity, another quickly growing Christian sect.
+Mormons, Jehovah's Witnesses, and Adventists form a distinctive group in Latin America. These religions are all relatively recent offshoots of Christianity that require a high degree of devotion from its followers. Missionary efforts from these religions have successfully converted millions in Latin America. I am interested in whether Fringe Christians in Latin America are more favorable to the US as a result of this. This paper aims to to study Fringe Christians in comparison to the dominant religion, Catholicism, as well as Evangelical Christianity, another quickly growing Christian sect.
 
 In the US, members of these Fringe Christian religions hold different views from traditional mainstream Christian beliefs. Mormons overwhelmingly vote Republican, but Utah (over 60% Mormon) residents support issues like gun reform, the ERA, and increased sexual education [@Larsen_2022]. Adventists are one of the most devout religious groups in the US but have varied political beliefs [@Lipka_2015]. Jehovah's Witnesses developed within the Adventist movement in the 19th century in the US [@Melton_2024]. They tend to be conservative, but remain politically inactive [@Lipka_2016]. Together, these three religions will be referred to as Fringe Christian religions.
 
@@ -81,19 +81,19 @@ Mormons, Jehovah's Witnesses, and Adventists will think more highly of the US th
 
 Because these Fringe Christian religions all originated in the US and many people in these religions in Latin America will be converts, I hypothesize they will have more positive exposure to Americans and US beliefs. This is because people in these religions will be more likely to have had exposure to Americans and American values through missionaries and religious messaging. They may associate positive feelings regarding their religion with positive feelings towards America, where such religions originated. Influential members of these religions are also Americans, which may increase this effect. Therefore, people in Fringe Christian religions will be more favorable towards the US, compared to Catholics and Evangelicals.
 
-Additionally, in studies of Pentecostal converts in Guatemala, researchers saw that "pentecostalized religious beliefs and charismatic experiences" across religious affiliations in Guatemala appear to be the most important religious factors driving political attitudes and actions [@steigenga2007conversion]. That is to say that Pentecostalism had a significant effect on political attitudes and actions. Similarly, I expect that Fringe Christian religious attitudes will affect many aspects of an individual's life. 
+In studies of Pentecostal converts in Guatemala, researchers saw that "pentecostalized religious beliefs and charismatic experiences" across religious affiliations in Guatemala appear to be the most important religious factors driving political attitudes and actions [@steigenga2007conversion]. That is to say that Pentecostalism had a significant effect on individual's experiences and actions. Similarly, I expect that Fringe Christian religious attitudes will affect many aspects of an individual's life, such as their opinions towards the US. 
 
 ## 3. Research Design
 
-My research utilizes the Latinobarómetro from 2023. The unit of analysis is respondent and the sample is made up of at least 1000 respondents from 17 surveyed countries. This dataset is not representative of the religious make-up by country, and the Evangelical population in certain countries is skewed.
+My research utilizes the Latinobarómetro from 2023. The unit of analysis is respondent and the sample is made up of at least 1000 respondents from 17 surveyed countries. This dataset is not representative of the religious make-up by country and the Evangelical population in certain countries is skewed.
 
-In my analysis, I have only included individuals who identified as religious in order perform a comparison across religious individuals. I will be using the religion variable, favorability towards the US variable, education variable, and nationality variable. To test my hypothesis, I will use the following equation:
+In my analysis, I have only included individuals who identified as religious in order perform a comparison across religious individuals. I will be using the religion variable, religious devotion variable, socioeconomic status variable, favorability towards the US variable, education variable, and nationality variable. To test my hypothesis, I will use the following equation:
 
 $$
 Favorability\_towards\_USi = \alpha + \beta_1 Religion_{i} + \epsilon_i
 $$
 
-I also consider factors such as religious devotion, socioeconomic status, nationality education that might explain the results of the initial regression model. 
+I also consider factors such as religious devotion, education, socioeconomic status, and nationality that might explain the results of the initial regression model. 
 
 To do this, I will use the following equations:
 
@@ -161,7 +161,7 @@ theme_zebra(dev_table2) %>% set_header_labels(dev_table2, # rename cols
 
 #### Socioeconomic Status
 
-In my survey, Catholics, Evangelicals, and Fringe Christians had similar socioeconomic status. The average individual in all groups was described as in between "Average" and "Good". In Chile and Argentina, researchers found that lower socioeconomic status accounted for lower levels of democratic attitudes [@patterson2004different]. My analysis will attempt to determine if socioeconomic status significant affects favorability towards the US.
+In my survey, Catholics, Evangelicals, and Fringe Christians came from a similar socioeconomic status. The average individual in all groups was described as in between "Average" and "Good". In Chile and Argentina, researchers found that lower socioeconomic status accounted for lower levels of democratic attitudes [@patterson2004different]. My analysis will attempt to determine if socioeconomic status significant affects favorability towards the US.
 
 ```{r}
 #| echo: false
@@ -226,7 +226,7 @@ theme_zebra(fav_table2) %>% set_header_labels(fav_table2, # rename cols
 ```
 #### Education Variable
 
-I will be using the education variable as a covariate to test if education is a potential confounder. Levels of education range from illiterate to a completed university education. 36% of respondents have education ranging from illiterate to completed basic education (light blue), 41% have some or a completed secondary education (medium blue), and 23% have some or a completed university education (dark blue). The median respondent has a complete secondary education.
+I will be using the education variable as a covariate to test if education is a potential confounder. Levels of education range from illiterate to a completed university education. 36% of respondents have education ranging from illiterate to completed basic education (light blue), 41% have some or a completed secondary education (medium blue), and 23% have some or a completed university education (dark blue). The median respondent had a complete secondary education.
 
 ```{r}
 #| echo: false
@@ -313,7 +313,6 @@ theme_zebra(country_table2) %>%
 
 ```
 
-
 ## 4. Findings
 
 ```{r}
@@ -347,7 +346,7 @@ coef_fav_christian_small_e / sd(df$P23ST.A, na.rm = TRUE) # -0.3793159
 
 ```
 
-On average, Catholic and Evangelical Christians rated their favorability towards the US 6.4 and 6.9 respectively. Meanwhile, the average rating from individuals in a Fringe Christian religion was a 5.8. Compared to Catholics and Evangelicals, Fringe Christians are more likely to have unfavorable feelings towards the US, with 63% of respondents reporting unfavorable opinions and 31% reporting favorable opinions. Among Catholics and Evangelicals, only 21% and 18% of the population had unfavorable opinions. Meanwhile, Evangelicals were most likely to have favorable opinions towards the US, at 76%.
+On average, Catholic and Evangelical Christians rated their favorability towards the US as 6.4 and 6.9 (on a scale of 0 - 10), respectively. The average rating from individuals in a Fringe Christian religion was a 5.8. Compared to Catholics and Evangelicals, Fringe Christians are more likely to have unfavorable feelings towards the US, with 63% of respondents reporting unfavorable opinions and 31% reporting favorable opinions. Among Catholics and Evangelicals, only 21% and 18% of the population had unfavorable opinions. Meanwhile, Evangelicals were most likely to have favorable opinions towards the US, at 76%.
 
 ```{r}
 #| echo: false
@@ -421,9 +420,9 @@ ggplot(p2, aes(x = factor(favorability, level=c('Very unfavorable', 'Somewhat un
 
 ```
 
-Individuals in Christian fringe religions were 0.22 standard deviations less favorable towards the US compared to Catholics and 0.38 standard deviations less favorable compared to Evangelicals. These effects are both significant.
+Individuals in Christian fringe religions were 0.22 standard deviations less favorable towards the US compared to Catholics and 0.38 standard deviations less favorable compared to Evangelicals. These effects were both significant.
 
-This indicates that being in a Fringe Christian group lowers the probability that an individual will have a favorable opinion towards the US, opposing my hypothesis. In fact, the data shows that compared to Catholics and Evangelicals. This could be explained by other factors, such as nationality or education level. The rest of this paper will attempt to answer why Fringe Christians are less favorable towards the US compared to Catholics and Evangelicals. 
+This indicates that being in a Fringe Christian group lowers the probability that an individual will have a favorable opinion towards the US, opposing my hypothesis. This could be explained by other factors and the rest of this paper will attempt to answer why Fringe Christians are less favorable towards the US compared to Catholics and Evangelicals. 
 
 ```{r}
 #| echo: false
@@ -488,7 +487,7 @@ ggplot(p3, aes(x = factor(devoutness, level=c('Not devout at all', 'Not very dev
 
 ```
 
-Increased devotion was found to have a significant effect on Catholics, increasing their favorability towards the US by 0.17. However, increased devotion was not found to have a significant effect on Evangelicals or Fringe Christians. Although Fringe Christians are more devoted than Catholics and Evangelicals, this an increase in devotion is not associated with a change in their favorability towards the US. Holding devotion constant, being in a Fringe Christian religion was associated with a negative change of 0.05 and 0.29 compared to Catholics and Evangelicals. 
+Increased devotion was found to have a significant effect on Catholics, increasing their favorability towards the US by 0.17. However, increased devotion was not found to have a significant effect on Evangelicals or Fringe Christians. Although Fringe Christians are more devoted than Catholics and Evangelicals, this increase in devotion was not associated with a change in favorability towards the US. Holding devotion constant, being in a Fringe Christian religion was associated with a decrease of 0.05 and 0.29 in favorability compared to Catholics and Evangelicals. 
 
 ```{r}
 #| echo: false
@@ -542,7 +541,7 @@ modelsummary(models,
 ```
 #### Socioeconomic Status
 
-When socioeconomic status is low, the average favorability score was 5.8 and 6.6 (out of 10), among Catholics and Evangelicals. An increase in education is associated with a increase of 0.35 in favorability for Catholics and an increase of 0.18 in favorability for and Evangelicals. Compared to Catholics and Evangelicals, the favorability of Fringe Christians with low socioeconomic status is decreased by 0.59 and 0.86, respectively. Compared to Evangelicals, increased socioeconomic status among Fringe Christians increases favorability by 0.81. This effect was not significant compared to Catholics. When controlling for socioeconomic status, the effect of being in a Fringe Christian religion was found to have a significant negative effect of 0.21 and 0.37, compared to Catholics and Evangelicals.
+When socioeconomic status is low, the average favorability score was 5.8 and 6.6 (on a scale of 0 - 10) among Catholics and Evangelicals. An increase in education was associated with an increase of 0.35 in favorability for Catholics and an increase of 0.18 in favorability for and Evangelicals. Compared to Catholics and Evangelicals, the favorability of Fringe Christians with low socioeconomic status decreased by 0.59 and 0.86, respectively. Compared to Evangelicals, increased socioeconomic status among Fringe Christians increased favorability by 0.81. This effect was not significant compared to Catholics. When controlling for socioeconomic status, the effect of being in a Fringe Christian religion was found to have a significant negative effect of 0.21 and 0.37, compared to Catholics and Evangelicals.
 
 ```{r}
 #| echo: false
@@ -652,9 +651,9 @@ summary(lm(P23ST.A ~ christian_small * REEEDUC.1, data = edu_high))
 
 ```
 
-Favorability among Christian groups in Latin America could also be due to education. In my data, Fringe Christians, Catholics, and Evangelicals have a similar average level of education, indicating that self selection into a Fringe Christian group is not associated with education. The median member of all of these groups has some secondary education. When holding education level constant, the effect of being in a Fringe Christian religion decreased favorability by 0.23 and 0.36, compared to Catholics and Evangelicals.
+In my data, Fringe Christians, Catholics, and Evangelicals had a similar average level of education, indicating that self selection into a Fringe Christian group was not associated with education. The median member of all of these groups had some secondary education. When holding education level constant, the effect of being in a Fringe Christian religion decreased favorability by 0.23 and 0.36, compared to Catholics and Evangelicals. I aim to see whether favorability among Christian groups in Latin America is affected by education. 
 
-**Low Education: ** For Catholics with low education, the average favorability towards US was 6.2. Compared to Catholics, Fringe Christian individuals with a low education had a -0.6 decrease in favorability. Among Catholics, when education level increases within the low education group, there was a 0.02 increase in favorability. The difference in the effect of education level on Fringe Christian individuals compared to Catholics was not significant. 
+**Low Education: ** For Catholics with low education, the average favorability towards US was 6.2 (on a scale from 0 - 10). Compared to Catholics, Fringe Christian individuals with a low education had a -0.6 decrease in favorability. Among Catholics, when education level increases within the low education group, there was a 0.02 increase in favorability. The difference in the effect of education level on Fringe Christian individuals compared to Catholics was not significant. 
 
 Compared to Evangelicals, Fringe Christians with low level of education experienced a 0.92 decrease in favorability. Among Evangelicals within the low education group, additional education level was associated with a 0.02 decrease in favorability. However, additional education had a positive effect of 0.12 on Fringe Christian individuals compared to Evangelicals.
 
@@ -719,7 +718,7 @@ modelsummary(models_b,
 ```
 These results suggest that among low education respondents, being in a Fringe Christian religion decreased favorability, compared to both Catholics and Evangelicals. An increase in education among low education respondents had a significant but small effect on Catholics and Evangelicals. For individuals in a Fringe Christian religion with low education, an increase in education increased favorability compared to Evangelicals. Among individuals with a medium education, an increase in education did not increase favorability for Catholics and Evangelicals. However, for those in a Fringe Christian religion with medium education, an increase in education did increase favorability. Individuals' favorability towards of US in the high education group was not significantly affected by any of these variables.
 
-Overall, low and medium education Fringe Christians had significantly lower favorability ratings, compared to low and medium education Catholics and Evangelicals. For individuals with a medium education and in a Fringe Christian religion, an increase in education increased favorability. This indicates that religion plays a significant role in favorability for people with a low and medium education. Additionally, additional education for an individual with medium education and in a Fringe Christian religion can significantly increase their favorability. For people with a high education, the ability of additional education or religion to significant affect one's political beliefs is not significant. 
+Overall, low and medium education Fringe Christians had significantly lower favorability ratings, compared to low and medium education Catholics and Evangelicals. For individuals with a medium education and in a Fringe Christian religion, an increase in education increased favorability. This indicates that religion plays a significant role in favorability for people with a low and medium education. Additionally, additional education for an individual with medium education and in a Fringe Christian religion can significantly increase their favorability. For people with a high education however, the ability of additional education or religion to significantly affect one's political beliefs was not significant. 
 
 ```{r}
 #| echo: false
@@ -841,7 +840,7 @@ fav2 <- fav[fav$country == "Bolivia" | fav$country == "Ecuador" | fav$country ==
 
 National politics may also play a large role in how people view the US. By comparing favorability towards the US between individuals in Fringe Christian religions and mainstream Catholics and Evangelicals, we attempt to distinguish what role nationality plays alongside religion. In this analysis, six countries (Costa Rica, Rep. Dominicana, El Salvador, Guatemala, Honduras, and Panamá) were removed due to insufficient data.
 
-The effects of nationality on favorability towards the US vary across Latin America. Average favorability towards the US was lowest in countries like Venezuela (5.4) and Bolivia (5.5) and highest in countries like Colombia (6.7) and Ecuador (7.2). In Venezuela and Mexico, there was a large difference between the national average favorability and the Fringe Christian average favorability. Meanwhile in Ecuador, there was not a large difference between the national average favorability and the Fringe Christian average favorability. The effect of country may vary depending on existing national attitudes. 
+The effects of nationality on favorability towards the US vary across Latin America. Average favorability towards the US was lowest in countries like Venezuela (5.4, on a scale from 0 - 10) and Bolivia (5.5) and highest in countries like Colombia (6.7) and Ecuador (7.2). In Venezuela and Mexico, there was a large difference between the national average favorability and the Fringe Christian average favorability. Meanwhile in Ecuador, there was not a large difference between the national average favorability and the Fringe Christian average favorability. The effect of country may vary depending on existing national attitudes. 
 
 ```{r}
 #| echo: false
@@ -953,13 +952,13 @@ modelsummary(models3,
 
 ```
 
-Depending on existing national attitudes, nationality may or may not significant effect favorability across Latin American countries. The interaction effect of country and religion was also not always found to be significant and also varied in magnitude. In some countries, nationality and religion did significantly affect favorability, however in other countries, only one or neither variable was found to be significant. This indicates large variability across Latin American and prompts further research into how national attitudes differ across Latin America.
+Depending on existing national attitudes, nationality may or may not significant effect favorability across Latin American countries. The interaction effect of country and religion was also not always found to be significant and varied in magnitude. In some countries, nationality and religion did significantly affect favorability, however in other countries, only one or neither variable was found to be significant. This indicates large variability across Latin American and prompts further research into how national attitudes differ across Latin America.
 
 ```{r}
 #| echo: false
 #| output: true
 fav_country_table <- flextable(fav)
-fav_country_table %>% 
+theme_zebra(fav_country_table) %>% 
   set_header_labels(fav_country_table, # rename cols
   country_order = "Country",
   avg_fav_us = "National Average",
@@ -974,7 +973,7 @@ fav_country_table %>%
 
 ## 6. Discussion and Policy Implications
 
-Being in a Fringe Christian religion was found to decrease an individual's favorability of the US. 
+Being in a Fringe Christian religion was found to decrease an individual's favorability of the US, opposing my original hypothesis. 
 
 In my survey, Fringe Christians had a similar level of education compared to Catholics and Evangelicals, although they were more devoted than both groups. Devotion was found to increase favorability only for Catholics. 
 
@@ -992,6 +991,6 @@ Favorability towards the US varies widely across Latin America. One of the stron
 
 My analysis would benefit from focusing on specific countries and exploring whether proximity from the US also affects religiosity. However, Fringe Christian data is missing or insufficient in many countries, so this kind of analysis was not possible. Looking at Latin American countries together might not be effective to find trends in religiosity and political beliefs. 
 
-In regards to policymaking, this research shows that religion continues to influence opinions and people of different religions also may have significantly different beliefs. Although most religious institutions and religious leaders do not explicitly espouse political ideals, the mindset and actions that religions promote have the potential to permeate through all aspects of one's life. 
+In regards to policymaking, this analysis shows that religion continues to influence opinions and people of different religions also may have significantly different beliefs. Although most religious institutions and religious leaders do not explicitly espouse political ideals, the mindset and actions that religions promote have the potential to permeate through all aspects of one's life. Policymakers should be mindful of the religious makeup and religious devotion of constituents when making decisions.
 
 ## Bibliography

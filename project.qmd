@@ -85,20 +85,29 @@ Additionally, in studies of Pentecostal converts in Guatemala, researchers saw t
 
 ## 3. Research Design
 
-My research utilizes the Latinobarómetro from 2023. The unit of analysis is respondent and the sample is made up of at least 1000 respondents from 17 surveyed countries. In my analysis, I have only included individuals who identified as religious in order perform a comparison across religious individuals. I will be using the religion variable, favorability towards the US variable, education variable, and nationality variable. To test my hypothesis, I will use the following equation:
+My research utilizes the Latinobarómetro from 2023. The unit of analysis is respondent and the sample is made up of at least 1000 respondents from 17 surveyed countries. This dataset is not representative of the religious make-up by country, and the Evangelical population in certain countries is skewed.
+
+In my analysis, I have only included individuals who identified as religious in order perform a comparison across religious individuals. I will be using the religion variable, favorability towards the US variable, education variable, and nationality variable. To test my hypothesis, I will use the following equation:
 
 $$
 Favorability\_towards\_USi = \alpha + \beta_1 Religion_{i} + \epsilon_i
 $$
 
-I also consider factors such as nationality and education that might explain cause pro-US people are more likely to convert to a fringe denomination. I will be using education and nationality in an attempt to explain the results of the initial regression model. 
+I also consider factors such as religious devotion, socioeconomic status, nationality education that might explain the results of the initial regression model. 
 
 To do this, I will use the following equations:
 
 $$
-Favorability\_towards\_USi = \alpha + \beta_1 Religion_{i} + \beta_2 Education_{i} + \beta_3 (Religion_{i} * Education_{i}) + \epsilon_i
+Favorability\_towards\_USi = \alpha + \beta_1 Religion_{i} + \beta_2 Devotion_{i} + \beta_3 (Religion_{i} * Devotion_{i}) + \epsilon_i
 $$
 
+$$
+Favorability\_towards\_USi = \alpha + \beta_1 Religion_{i} + \beta_2 Socioeconomic Status_{i} + \beta_3 (Religion_{i} * Socioeconomic Status_{i}) + \epsilon_i
+$$
+
+$$
+Favorability\_towards\_USi = \alpha + \beta_1 Religion_{i} + \beta_2 Education_{i} + \beta_3 (Religion_{i} * Education_{i}) + \epsilon_i
+$$
 $$
 Favorability\_towards\_USi = \alpha + \beta_1 Religion_{i} + \beta_2 Nationality_{i} + \beta_3 (Religion_{i} * Nationality_{i})+ \epsilon_i
 $$
@@ -140,16 +149,46 @@ theme_zebra(dev_table) %>%  set_header_labels(dev_table, # rename cols
 
 # flextable by devotion
 df$devotion <- NA
-df$devotion[df$S1A == 0] <- "Not devout at all"
-df$devotion[df$S1A == 0.33] <- "Not very devout"
-df$devotion[df$S1A == 0.67] <- "Devout"
-df$devotion[df$S1A == 1] <- "Very devout"
+df$devotion[df$S1A == 0] <- "0.00 (Not devout at all)"
+df$devotion[df$S1A == 0.33] <- "0.33 (Not very devout)"
+df$devotion[df$S1A == 0.67] <- "0.67 (Devout)"
+df$devotion[df$S1A == 1] <- "1.00 (Very devout)"
 
 dev_table2 <- as_flextable(table(df$dev))
 theme_zebra(dev_table2) %>% set_header_labels(dev_table2, # rename cols
   Var1 = "Level of Devotion") 
+```
 
+#### Socioeconomic Status
 
+In my survey, Catholics, Evangelicals, and Fringe Christians had similar socioeconomic status. The average individual in all groups was described as in between "Average" and "Good". In Chile and Argentina, researchers found that lower socioeconomic status accounted for lower levels of democratic attitudes [@patterson2004different]. My analysis will attempt to determine if socioeconomic status significant affects favorability towards the US.
+
+```{r}
+#| echo: false
+#| output: true
+
+# find avg, sd, and range
+sum <- c("Mean", "Standard Deviation")
+sum_soc_val <- c(round(mean(df$S24, na.rm = TRUE), 2), 
+                round(sd(df$S24, na.rm = TRUE), 2))
+sum_soc <- data.frame(sum, sum_soc_val)
+
+soc_table <- flextable(sum_soc) 
+theme_zebra(soc_table) %>%  set_header_labels(soc_table, # rename cols
+  sum = "Statistic",
+  sum_soc_val = "Value")
+
+# flextable by devotion
+df$soc <- NA
+df$soc[df$S24 == 0] <- "0.00 (Very bad)"
+df$soc[df$S24 == 0.25] <- "0.25 (Bad)"
+df$soc[df$S24 == 0.5] <- "0.50 (Average)"
+df$soc[df$S24 == 0.75] <- "0.75 (Good)"
+df$soc[df$S24 == 1] <- "1.00 (Very good)"
+
+soc_table2 <- as_flextable(table(df$soc))
+theme_zebra(soc_table2) %>% set_header_labels(soc_table2, # rename cols
+  Var1 = "Socioeconomic Status") 
 ```
 
 #### Opinions Towards the US Variable
@@ -441,7 +480,7 @@ ggplot(p3, aes(x = factor(devoutness, level=c('Not devout at all', 'Not very dev
   geom_bar(stat="identity", position=position_dodge()) + 
   ggtitle("Devotion by Christian Groups in Latin America") +
   xlab("\nLevel of Devotion") + ylab("Percentage\n") +
-  labs(caption = "Data source: Latinobarometer 2023. Individuals who answered agnostic, atheist or did not answer \non the religion question were removed.") +
+  labs(caption = "Data source: Latinobarómetro 2023. Individuals who answered agnostic, atheist or did not answer \non the religion question were removed.") +
   theme(plot.caption = element_text(hjust = 0, face = "italic")) +
     scale_fill_manual(name = "Religious Group", 
                       labels = c("Catholic", "Evangelical","Fringe Christian"),
@@ -449,16 +488,21 @@ ggplot(p3, aes(x = factor(devoutness, level=c('Not devout at all', 'Not very dev
 
 ```
 
-Increased devotion was found to have a significant effect on Catholics, increasing their favorability towards the US by 0.17. However, increased devotion was not found to have a significant effect on Evangelicals or Fringe Christians. Although Fringe Christians are more devoted than Catholics and Evangelicals, this an increase in devotion is not associated with a change in their favorability towards the US.
+Increased devotion was found to have a significant effect on Catholics, increasing their favorability towards the US by 0.17. However, increased devotion was not found to have a significant effect on Evangelicals or Fringe Christians. Although Fringe Christians are more devoted than Catholics and Evangelicals, this an increase in devotion is not associated with a change in their favorability towards the US. Holding devotion constant, being in a Fringe Christian religion was associated with a negative change of 0.05 and 0.29 compared to Catholics and Evangelicals. 
 
 ```{r}
 #| echo: false
 #| output: false
 
-
 #summary(lm(P23ST.A ~ P45ST.A, data = df))
-summary(lm(P23ST.A ~ christian_small*P40STGBS, data = df))
-summary(lm(P23ST.A ~ christian_small_e*P40STGBS, data = df))
+summary(lm(P23ST.A ~ christian_small + factor(S1A), data = df))
+summary(lm(P23ST.A ~ christian_small + factor(S1A), data = df_e))
+
+summary(lm(S24 ~ christian_small, data = df))
+summary(lm(P23ST.A ~ S24, data = df))
+summary(lm(P23ST.A ~ christian_small*S24, data = df))
+summary(lm(P23ST.A ~ christian_small_e*S24, data = df))
+#
 
 summary(lm(P23ST.A ~ S1A, data = df))
 summary(lm(P23ST.A ~ christian_small*S1A, data = df))
@@ -468,8 +512,19 @@ dev_all_model <- lm(P23ST.A ~ S1A, data = df)
 dev_c_model <- lm(P23ST.A ~ christian_small * S1A, data = df)
 dev_e_model <- lm(P23ST.A ~ christian_small * S1A, data = df_e)
 
-round((dev_c_model$coefficients[3] / sd(df$P23ST.A, na.rm = TRUE)), 2) # 0.17
-round((dev_e_model$coefficients[3] / sd(df$P23ST.A, na.rm = TRUE)), 2) # -0.53
+dev_c_model2 <- (lm(P23ST.A ~ christian_small + factor(S1A), data = df))
+dev_e_model2 <- (lm(P23ST.A ~ christian_small + factor(S1A), data = df_e))
+
+round((dev_c_model$coefficients[2] / sd(df$P23ST.A, na.rm = TRUE)), 2) # -0.05 
+round((dev_e_model$coefficients[2] / sd(df$P23ST.A, na.rm = TRUE)), 2) # -0.29 
+
+round((dev_c_model$coefficients[3] / sd(df$P23ST.A, na.rm = TRUE)), 2) # .17 
+round((dev_e_model$coefficients[3] / sd(df$P23ST.A, na.rm = TRUE)), 2) # -0.02 
+
+round((dev_e_model$coefficients[4] / sd(df$P23ST.A, na.rm = TRUE)), 2) # 
+
+round((dev_c_model$coefficients[2] / sd(df$P23ST.A, na.rm = TRUE)), 2) # -0.05 
+round((dev_e_model$coefficients[2] / sd(df$P23ST.A, na.rm = TRUE)), 2) # -0.29 
 
 ```
 
@@ -477,12 +532,59 @@ round((dev_e_model$coefficients[3] / sd(df$P23ST.A, na.rm = TRUE)), 2) # -0.53
 #| echo: false
 #| output: true
 models <- list("Catholics" = dev_c_model, 
-               "Evangelicals" = dev_e_model)
+               "Evangelicals" = dev_e_model,
+               "Catholics, holding devotion constant" = dev_c_model2,
+               "Evangelicals, holding devotion constant" = dev_e_model2)
 modelsummary(models,
              estimate = "{estimate}",
              statistic = c("p = {p.value}"))
 
 ```
+#### Socioeconomic Status
+
+When socioeconomic status is low, the average favorability score was 5.8 and 6.6 (out of 10), among Catholics and Evangelicals. An increase in education is associated with a increase of 0.35 in favorability for Catholics and an increase of 0.18 in favorability for and Evangelicals. Compared to Catholics and Evangelicals, the favorability of Fringe Christians with low socioeconomic status is decreased by 0.59 and 0.86, respectively. Compared to Evangelicals, increased socioeconomic status among Fringe Christians increases favorability by 0.81. This effect was not significant compared to Catholics. When controlling for socioeconomic status, the effect of being in a Fringe Christian religion was found to have a significant negative effect of 0.21 and 0.37, compared to Catholics and Evangelicals.
+
+```{r}
+#| echo: false
+#| output: false
+summary(lm(S24 ~ christian_small, data = df))
+summary(lm(christian_small ~ S24, data = df))
+summary(lm(P23ST.A ~ S24, data = df))
+summary(lm(P23ST.A ~ christian_small*S24, data = df))
+summary(lm(P23ST.A ~ christian_small_e*S24, data = df))
+
+summary(lm(P23ST.A ~ christian_small + factor(S24), data = df))
+
+soc_c_model <- lm(P23ST.A ~ christian_small * S24, data = df)
+soc_e_model <- lm(P23ST.A ~ christian_small * S24, data = df_e)
+
+soc_c_model2 <- lm(P23ST.A ~ christian_small + factor(S24), data = df)
+soc_e_model2 <- lm(P23ST.A ~ christian_small + factor(S24), data = df_e)
+
+round((soc_c_model$coefficients[3] / sd(df$P23ST.A, na.rm = TRUE)), 2) # 0.35
+round((soc_e_model$coefficients[3] / sd(df$P23ST.A, na.rm = TRUE)), 2) # 0.18
+
+round((soc_c_model$coefficients[2] / sd(df$P23ST.A, na.rm = TRUE)), 2) # -0.59 
+round((soc_e_model$coefficients[2] / sd(df$P23ST.A, na.rm = TRUE)), 2) # -0.86 
+
+round((soc_c_model2$coefficients[2] / sd(df$P23ST.A, na.rm = TRUE)), 2) # -0.21 
+round((soc_e_model2$coefficients[2] / sd(df$P23ST.A, na.rm = TRUE)), 2) # -0.37
+
+```
+
+```{r}
+#| echo: false
+#| output: true
+models <- list("Catholics" = soc_c_model, 
+               "Evangelicals" = soc_e_model,
+               "Catholics, holding socioecon. status constant" = soc_c_model2,
+               "Evangelicals, holding socioecon. status constant" = soc_e_model2)
+modelsummary(models,
+             estimate = "{estimate}",
+             statistic = c("p = {p.value}"))
+
+```
+
 #### Education
 
 ```{r}
@@ -550,7 +652,7 @@ summary(lm(P23ST.A ~ christian_small * REEEDUC.1, data = edu_high))
 
 ```
 
-Favorability among Christian groups in Latin America could also be due to education. In my data, Fringe Christians, Catholics, and Evangelicals have a similar average level of education, indicating that self selection into a Fringe Christian group is not associated with education. The median member of all of these groups has some secondary education. Comparing favorability towards the US across different education levels is helpful to understand why those in Fringe Christian groups have lower favorability.
+Favorability among Christian groups in Latin America could also be due to education. In my data, Fringe Christians, Catholics, and Evangelicals have a similar average level of education, indicating that self selection into a Fringe Christian group is not associated with education. The median member of all of these groups has some secondary education. When holding education level constant, the effect of being in a Fringe Christian religion decreased favorability by 0.23 and 0.36, compared to Catholics and Evangelicals.
 
 **Low Education: ** For Catholics with low education, the average favorability towards US was 6.2. Compared to Catholics, Fringe Christian individuals with a low education had a -0.6 decrease in favorability. Among Catholics, when education level increases within the low education group, there was a 0.02 increase in favorability. The difference in the effect of education level on Fringe Christian individuals compared to Catholics was not significant. 
 
@@ -574,6 +676,8 @@ med_e_model <- lm(P23ST.A ~ christian_small * REEEDUC.1, data = edu_medium_e)
 high_c_model <- lm(P23ST.A ~ christian_small * REEEDUC.1, data = edu_high)
 high_e_model <- lm(P23ST.A ~ christian_small * REEEDUC.1, data = edu_high_e)
 
+edu_c_model <- lm(P23ST.A ~ christian_small + factor(REEEDUC.1), data = df)
+edu_e_model <- lm(P23ST.A ~ christian_small + factor(REEEDUC.1), data = df_e)
 #low
 round((low_c_model$coefficients[2] / sd(df$P23ST.A, na.rm = TRUE)), 2) # -0.6
 round((low_c_model$coefficients[3] / sd(df$P23ST.A, na.rm = TRUE)), 2) # 0.02
@@ -589,6 +693,10 @@ round((med_c_model$coefficients[4] / sd(df$P23ST.A, na.rm = TRUE)), 2) #  0.72
 round((med_e_model$coefficients[2] / sd(df$P23ST.A, na.rm = TRUE)), 2) # -3.77
 round((med_e_model$coefficients[4] / sd(df$P23ST.A, na.rm = TRUE)), 2) #  0.72 
 
+#constant
+round((edu_c_model$coefficients[2] / sd(df$P23ST.A, na.rm = TRUE)), 2) # -0.23
+round((edu_e_model$coefficients[2] / sd(df$P23ST.A, na.rm = TRUE)), 2) # -0.36 
+
 ```
 
 ```{r}
@@ -596,12 +704,14 @@ round((med_e_model$coefficients[4] / sd(df$P23ST.A, na.rm = TRUE)), 2) #  0.72
 #| output: true
 #| warning: false
 
-models_b <- list("Low Education, Catholic" = low_c_model, 
-               "Low Education, Evangelical" = low_e_model,
-               "Medium Education, Catholic" = med_c_model,
-               "Medium Education, Evangelical" = med_e_model,
-               "High Education, Catholic" = high_c_model,
-               "High Education, Evangelical" = high_e_model)
+models_b <- list("Catholic, Low Education" = low_c_model, 
+               "Evangelical, Low Education" = low_e_model,
+               "Catholic, Medium Education" = med_c_model,
+               "Evangelical, Medium Education" = med_e_model,
+               "Catholic, High Education" = high_c_model,
+               "Evangelical, High Education" = high_e_model,
+               "Catholic, holding education constant" = edu_c_model,
+               "Evangelical, holding education constant" = edu_e_model)
 modelsummary(models_b,
              estimate = "{estimate}",
              statistic = c("p = {p.value}"))
@@ -755,7 +865,7 @@ ggplot(p_fav, aes(x = factor(country_order, level=c('Venezuela', 'Bolivia', 'Per
 
 ```
 
-We see varied effects when looking at Venezuela (low favorability), Peru (moderate favorability), and Ecuador (high favorability). The magnitude of the effects will be stated in units of standard deviation. 
+We see varied effects when looking at Venezuela (low favorability), Peru (moderate favorability), and Ecuador (high favorability). The regression tables show effects in terms of favorability towards the US (which range from 0 - 1). In my analysis, I describe the magnitude of the effects in units of standard deviation. 
 
 **Venezuela:** Among Catholics, Venezuelan nationality by itself was associated with a 0.43 decrease in favorability and among Evangelicals, a 0.53 decrease. However, the effect of Venezuelan identity on Fringe Christian individuals was not found to significantly affect favorability, compared to Catholics or compared to Evangelicals.
 
@@ -866,21 +976,22 @@ fav_country_table %>%
 
 Being in a Fringe Christian religion was found to decrease an individual's favorability of the US. 
 
-In my survey, Fringe Christians had a similar level of education compared to Catholics and Evangelicals, although they were more devoted than both groups. Devotion was found to increase favorability only for Catholics.  
+In my survey, Fringe Christians had a similar level of education compared to Catholics and Evangelicals, although they were more devoted than both groups. Devotion was found to increase favorability only for Catholics. 
+
+Existing research from Chile and Argentina found that more devout individuals tended to be more supportive of government institutions and democratic systems [@patterson2004different]. In my analysis, I found that increased devotion among Catholics increased their favorbility towards the US. However, this effect did not occur among Evangelicals or Fringe Christians.
+
+The same study also found that political engagement mattered more than religiosity or demographics in explaining support for democratic beliefs. Individuals with increased political engagement were more likely to support democratic attitudes, while those that were less politically engaged were more likely to settle for the status quo and have less faith in the government [@patterson2004different]. However, using the "How interested are you in politics?" question, I did not find these effects to be significant in my analysis. 
+
+In my analysis, among those with low socioeconomic status, Fringe Christians had lower opinions of the US than Catholics and Evangelicals, and increased socioeconomic did increase favorability compared to Evangelicals. However, the socioeconomic status of all three groups were similar, so this variable does not help explain why Fringe Christians have a lower favorability.
+
+In the US, increased education was found to increase religious attendance at the individual level, but decrease religious beliefs [@glaeser2008education]. In Canada, researchers found that higher levels of education led to lower levels of religious affiliation later in life [@hungerman2014effect]. In my analysis, the beliefs of respondents with some university education were not significantly affected by either an increase in education or joining a Fringe Christian religion. However, these results are still difficult to explain.
+
+Holding constant education, devotion, and socioeconomic status, being in a Fringe Christian was still found to have a negative effect on favorability.
 
 Favorability towards the US varies widely across Latin America. One of the strongest predictors of favorability in Latin America is distance from the US, meaning the individuals in Central America are more favorable than individuals in South America. The next most important factor is receiving money from US emigrants [@TheEconomist_2016]. This shows that proximity and perceived economic benefit play a large role in favorability of the US.
 
-Additionally, national politics also seem to affect the popularity of the US. Countries previously or currently governed by leftists, such as Venezuela or Bolivia, are more likely to disfavor the US than countries governed by conservatives, such as Peru or Colombia. In Latin American countries with high murder rates, typically associated with drug shipments to the north, favorability is also lower [@TheEconomist_2016].
+My analysis would benefit from focusing on specific countries and exploring whether proximity from the US also affects religiosity. However, Fringe Christian data is missing or insufficient in many countries, so this kind of analysis was not possible. Looking at Latin American countries together might not be effective to find trends in religiosity and political beliefs. 
 
-However, this does not explain why as a whole, Mormons, Jehovah's Witnesses, and Adventists tend to view the US less favorably. 
-
-In the US, increased education was found to increase religious attendance at the individual level, but  decrease religious beliefs [@glaeser2008education]. In Canada,  researchers found that higher levels of education lead to lower levels of religious affiliation later in life [@hungerman2014effect]. In my research, the beliefs of respondents with some university education were not significantly affected by either an increase in education or joining a Fringe Christian religion. However, these results are still difficult to explain.
-
-Are there other important factors you can control for, like wealth? That seems like something that could be a cause of both fringe religion and perceptions of US.
-
-This also shows that looking at Latin American countries together might not be effective to find trends in political beliefs. 
-
-In regards to policymaking, this research shows that religion continues to influence opinions and people of different religions also may have significantly different beliefs. Although most religious institutions and religious leaders do not explicitly espouse political ideals, the mindset and actions that religions promote have the potential to permeate through all aspects of one's life. Rather than just the 
-
+In regards to policymaking, this research shows that religion continues to influence opinions and people of different religions also may have significantly different beliefs. Although most religious institutions and religious leaders do not explicitly espouse political ideals, the mindset and actions that religions promote have the potential to permeate through all aspects of one's life. 
 
 ## Bibliography

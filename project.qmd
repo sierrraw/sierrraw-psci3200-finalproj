@@ -456,7 +456,7 @@ Increased devotion was found to have a significant effect on Catholics, increasi
 #| output: false
 
 
-summary(lm(P23ST.A ~ P45ST.A, data = df))
+#summary(lm(P23ST.A ~ P45ST.A, data = df))
 summary(lm(P23ST.A ~ christian_small*P40STGBS, data = df))
 summary(lm(P23ST.A ~ christian_small_e*P40STGBS, data = df))
 

@@ -9,7 +9,7 @@
 <meta name="author" content="Sierra Wei">
 <meta name="dcterms.date" content="2024-05-10">
 
-<title>sierrraw-psci3200-finalproj - data_cleaning</title>
+<title>PSCI 3200 Final Project - data_cleaning</title>
 <style>
 code{white-space: pre-wrap;}
 span.smallcaps{font-variant: small-caps;}
@@ -4665,7 +4665,7 @@ vertical-align: -.125em;
       <div class="navbar-container container-fluid">
       <div class="navbar-brand-container mx-auto">
     <a class="navbar-brand" href="./index.html">
-    <span class="navbar-title">sierrraw-psci3200-finalproj</span>
+    <span class="navbar-title">PSCI 3200 Final Project</span>
     </a>
   </div>
             <div id="quarto-search" class title="Search"></div>
@@ -4675,16 +4675,12 @@ vertical-align: -.125em;
           <div class="collapse navbar-collapse" id="navbarCollapse">
             <ul class="navbar-nav navbar-nav-scroll me-auto">
   <li class="nav-item">
-    <a class="nav-link" href="./index.html"> 
-<span class="menu-text">Home</span></a>
+    <a class="nav-link" href="./project.html"> 
+<span class="menu-text">Project</span></a>
   </li>  
   <li class="nav-item">
     <a class="nav-link" href="./about.html"> 
 <span class="menu-text">About</span></a>
-  </li>  
-  <li class="nav-item">
-    <a class="nav-link" href="./project.html"> 
-<span class="menu-text">Final Project</span></a>
   </li>  
 </ul>
           </div> <!-- /navcollapse -->
@@ -5030,7 +5026,10 @@ The following object is masked from &#39;package:stats&#39;:
 <span id="cb10-85"><a href="#cb10-85" aria-hidden="true" tabindex="-1"></a>df23<span class="sc">$</span>P40STGBS[df23<span class="sc">$</span>P40STGBS <span class="sc">==</span> <span class="dv">3</span>] <span class="ot">&lt;-</span> <span class="fl">0.67</span> <span class="co"># a little</span></span>
 <span id="cb10-86"><a href="#cb10-86" aria-hidden="true" tabindex="-1"></a>df23<span class="sc">$</span>P40STGBS[df23<span class="sc">$</span>P40STGBS <span class="sc">==</span> <span class="dv">2</span>] <span class="ot">&lt;-</span> <span class="fl">0.33</span> <span class="co"># fairly</span></span>
 <span id="cb10-87"><a href="#cb10-87" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb10-88"><a href="#cb10-88" aria-hidden="true" tabindex="-1"></a><span class="fu">write.csv</span>(df23, <span class="st">&quot;/Users/sierra/Documents/GitHub/sierrraw-psci3200-finalproj/data/Latinobarometer23_cleaned.csv&quot;</span>, <span class="at">row.names=</span><span class="cn">FALSE</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb10-88"><a href="#cb10-88" aria-hidden="true" tabindex="-1"></a><span class="co"># P45ST.A sign petition</span></span>
+<span id="cb10-89"><a href="#cb10-89" aria-hidden="true" tabindex="-1"></a>df23_raw<span class="sc">$</span>P45ST.A[df23<span class="sc">$</span>P45ST.A <span class="sc">==</span> <span class="dv">0</span> <span class="sc">|</span> df23<span class="sc">$</span>P45ST.A <span class="sc">&lt;</span> <span class="dv">0</span>] <span class="ot">&lt;-</span> <span class="cn">NA</span></span>
+<span id="cb10-90"><a href="#cb10-90" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-91"><a href="#cb10-91" aria-hidden="true" tabindex="-1"></a><span class="fu">write.csv</span>(df23, <span class="st">&quot;/Users/sierra/Documents/GitHub/sierrraw-psci3200-finalproj/data/Latinobarometer23_cleaned.csv&quot;</span>, <span class="at">row.names=</span><span class="cn">FALSE</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 
 

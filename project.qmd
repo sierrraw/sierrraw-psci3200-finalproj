@@ -3,7 +3,7 @@ title: "Final Project"
 author: "Sierra Wei"
 
 institute: "University of Pennsylvania"
-date: last-modified
+date: "May 10, 2024"
 toc: true
 
 bibliography: references.bib

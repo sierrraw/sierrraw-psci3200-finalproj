@@ -287,6 +287,9 @@ df23$P40STGBS[df23$P40STGBS == 4] <- 0 # not at all interested
 df23$P40STGBS[df23$P40STGBS == 3] <- 0.67 # a little
 df23$P40STGBS[df23$P40STGBS == 2] <- 0.33 # fairly
 
+# P45ST.A sign petition
+df23_raw$P45ST.A[df23$P45ST.A == 0 | df23$P45ST.A < 0] <- NA
+
 write.csv(df23, "/Users/sierra/Documents/GitHub/sierrraw-psci3200-finalproj/data/Latinobarometer23_cleaned.csv", row.names=FALSE)
 
 ```

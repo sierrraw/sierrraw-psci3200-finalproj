@@ -3,7 +3,7 @@ project:
   output-dir: docs
 
 website:
-  title: "PSCI3200 Final Project"
+  title: "PSCI 3200 Final Project"
   navbar:
     left:
       - href: project.qmd

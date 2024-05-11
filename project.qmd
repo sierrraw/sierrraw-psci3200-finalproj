@@ -110,9 +110,11 @@ Over half of respondents identified as Catholic in the religion question. The se
 #| output: true
 
 rel_table <- as_flextable(table(df_raw$religion))
-rel_table %>% set_header_labels(rel_table, # rename cols
+theme_zebra(rel_table) %>% set_header_labels(rel_table, # rename cols
   Var1 = "Religion") %>% 
-  style(i = c(1, 6, 7, 12, 13), pr_t = fp_text_default(color = "#4E84C4")) 
+  style(i = c(1, 6, 7, 12, 13), pr_t = fp_text_default(color = "#4E84C4"))
+
+
 
 ```
 
@@ -145,7 +147,7 @@ df$fav_us[df$P23ST.A == 0.67] <- "0.67 (Favorable)"
 df$fav_us[df$P23ST.A == 1] <- "1.00 (Very favorable)"
 
 fav_table2 <- as_flextable(table(df$fav_us))
-fav_table2 %>% set_header_labels(fav_table2, # rename cols
+theme_zebra(fav_table2) %>% set_header_labels(fav_table2, # rename cols
   Var1 = "Favorability Level")
 
 
@@ -181,10 +183,10 @@ df$edu2[df$REEEDUC.1 == 6] <- "6 (Incomplete University education)"
 df$edu2[df$REEEDUC.1 == 7] <- "7 (Complete University education)"
 
 sum_edu2 <- as_flextable(table(df$edu2)) 
-sum_edu2 %>%
+theme_zebra(sum_edu2) %>%
   set_header_labels(sum_edu2, # rename cols
   Var1 = "Education Level") %>%  
-  style(i = c(1:3), pr_t = fp_text_default(color = "#bcd1f7")) %>% 
+  style(i = c(1:3), pr_t = fp_text_default(color = "forestgreen")) %>% 
   style(i = c(4:5), pr_t = fp_text_default(color = "#4E84C4")) %>% 
   style(i = c(6:7), pr_t = fp_text_default(color = "#293352"))
 
@@ -200,7 +202,7 @@ I will also be using the country variable as a covariate to test if nationality 
 #| output: true
 
 country_table <- as_flextable(table(df$country)) 
-country_table %>%
+theme_zebra(country_table) %>%
   set_header_labels(country_table, # rename cols
   Var1 = "Country")
 
@@ -231,7 +233,7 @@ for (i in 1:length(country_all)) {
 }
 
 country_table2 <- flextable(country_df) 
-country_table2 %>%
+theme_zebra(country_table2) %>%
   set_header_labels(country_table2, # rename cols
     Percent2 = "Percent",
     Percent3 = "Percent",
@@ -658,9 +660,10 @@ modelsummary(models_b,
              statistic = c("p = {p.value}"))
 
 ```
-These results suggest that among low education respondents, being in a fringe religion decreases favorability, compared to both Catholics and Evangelicals. An increase in education among low education respondents had a significant but small effect on Catholics and Evangelicals. For individuals in a Fringe Christian religion with low education, an increase in education does increase favorability compared to Evangelicals. Among individuals with a medium education, an increase in education does not increase favorability for Catholics and Evangelicals. However, for those in a Fringe Christian religion with medium education, an increase in education does increase favorability. Individuals' favorability towards of US in the high education group was not significantly affected by any of these variables.
+These results suggest that among low education respondents, being in a Fringe Christian religion decreased favorability, compared to both Catholics and Evangelicals. An increase in education among low education respondents had a significant but small effect on Catholics and Evangelicals. For individuals in a Fringe Christian religion with low education, an increase in education increased favorability compared to Evangelicals. Among individuals with a medium education, an increase in education did not increase favorability for Catholics and Evangelicals. However, for those in a Fringe Christian religion with medium education, an increase in education did increase favorability. Individuals' favorability towards of US in the high education group was not significantly affected by any of these variables.
 
-Overall, compared to low and medium education respondents, Fringe Christian individuals had significantly lower favorability ratings. We see that for individuals with a medium education and in a Fringe Christian religion, an increase in education increases favorability. Therefore, religion plays a significant role in favorability beliefs for people with a low and medium education, and if an individual already has medium education and they are in a Fringe Christian relgion, more education can increase their favorability. For people with a high education, the ability of additional education or religion to significant affect one's political beliefs is decreased.
+Overall, low and medium education Fringe Christians had significantly lower favorability ratings, compared to low and medium education Catholics and Evangelicals. For individuals with a medium education and in a Fringe Christian religion, an increase in education increased favorability. This indicates that religion plays a significant role in favorability for people with a low and medium education. Additionally, additional education for an individual with medium education and in a Fringe Christian religion can significantly increase their favorability. For people with a high education, the ability of additional education or religion to significant affect one's political beliefs is not significant. 
+
 ```{r}
 #| echo: false
 #| output: true
@@ -742,108 +745,6 @@ ggplot(q2, aes(x = factor(favorability, level=c('Very unfavorable','Somewhat unf
     'Somewhat unfavorable' = 'Somewhat \nunfavorable', 
     'Very unfavorable' = 'Very \nunfavorable'))
   
-```
-
-#### Devotion ??
-
-```{r}
-#| echo: false
-#| output: false
-
-
-pct_us_favorable_3 <- c(
-sum(df$christian_small[df$P23ST.A == 0 & df$S1A == 0] == 1, na.rm = TRUE) / 
-  sum(df$christian_small[df$S1A == 0] == 1, na.rm = TRUE),
-sum(df$christian_small[df$P23ST.A == 0.33 & df$S1A == 0] == 1, na.rm = TRUE) / 
-  sum(df$christian_small[df$S1A == 0] == 1, na.rm = TRUE),
-sum(df$christian_small[df$P23ST.A == 0.67 & df$S1A == 0] == 1, na.rm = TRUE) / 
-  sum(df$christian_small[df$S1A == 0] == 1, na.rm = TRUE),
-sum(df$christian_small[df$P23ST.A == 1 & df$S1A == 0] == 1, na.rm = TRUE) / 
-  sum(df$christian_small[df$S1A == 0] == 1, na.rm = TRUE),
-
-sum(df$christian_small[df$P23ST.A == 0 & df$S1A == 0.33] == 1, na.rm = TRUE) / 
-  sum(df$christian_small[df$S1A == 00.33], na.rm = TRUE),
-sum(df$christian_small[df$P23ST.A == 0.33 & df$S1A == 0.33] == 1, na.rm = TRUE) / 
-  sum(df$christian_small[df$S1A == 0.33] == 1, na.rm = TRUE),
-sum(df$christian_small[df$P23ST.A == 0.67 & df$S1A == 0.33] == 1, na.rm = TRUE) / 
-  sum(df$christian_small[df$S1A == 0.33] == 1, na.rm = TRUE),
-sum(df$christian_small[df$P23ST.A == 1 & df$S1A == 0.33] == 1, na.rm = TRUE) / 
-  sum(df$christian_small[df$S1A == 0.33] == 1, na.rm = TRUE),
-
-sum(df$christian_small[df$P23ST.A == 0 & df$S1A == 0.67] == 1, na.rm = TRUE) / 
-  sum(df$christian_small[df$S1A == 0.67] == 1, na.rm = TRUE),
-sum(df$christian_small[df$P23ST.A == 0.33 & df$S1A == 0.67] == 1, na.rm = TRUE) / 
-  sum(df$christian_small[df$S1A == 0.67] == 1, na.rm = TRUE),
-sum(df$christian_small[df$P23ST.A == 0.67 & df$S1A == 0.67] == 1, na.rm = TRUE) / 
-  sum(df$christian_small[df$S1A == 0.67] == 1, na.rm = TRUE),
-sum(df$christian_small[df$P23ST.A == 1 & df$S1A == 0.67] == 1, na.rm = TRUE) / 
-  sum(df$christian_small[df$S1A == 0.67] == 1, na.rm = TRUE),
-
-sum(df$christian_small[df$P23ST.A == 0 & df$S1A == 1] == 1, na.rm = TRUE) / 
-  sum(df$christian_small[df$S1A == 1] == 1, na.rm = TRUE),
-sum(df$christian_small[df$P23ST.A == 0.33 & df$S1A == 1] == 1, na.rm = TRUE) / 
-  sum(df$christian_small[df$S1A == 1] == 1, na.rm = TRUE),
-sum(df$christian_small[df$P23ST.A == 0.67 & df$S1A == 1] == 1, na.rm = TRUE) / 
-  sum(df$christian_small[df$S1A == 1] == 1, na.rm = TRUE),
-sum(df$christian_small[df$P23ST.A == 1 & df$S1A == 1] == 1, na.rm = TRUE) / 
-  sum(df$christian_small[df$S1A == 1] == 1, na.rm = TRUE)
-)
-
-
-dev <- c("Not devout at all", "Not devout at all", "Not devout at all", "Not devout at all",
-         "Not very devout", "Not very devout", "Not very devout", "Not very devout",
-         "Devout", "Devout", "Devout", "Devout",
-         "Very devout", "Very devout", "Very devout", "Very devout")
-
-favorability <- c(
-  "Very unfavorable", "Somewhat unfavorable", "Somewhat favorable", "Very favorable", 
-  "Very unfavorable", "Somewhat unfavorable", "Somewhat favorable", "Very favorable", 
-  "Very unfavorable", "Somewhat unfavorable", "Somewhat favorable", "Very favorable", 
-  "Very unfavorable", "Somewhat unfavorable", "Somewhat favorable", "Very favorable")
-
-q3 <- data.frame(dev, favorability, pct_us_favorable_3)
-
-# graph
-ggplot(q3, aes(x = factor(favorability, level=c('Very unfavorable','Somewhat unfavorable','Somewhat favorable', 'Very favorable')), y= pct_us_favorable_3, fill = dev)) + 
-  geom_bar(stat="identity", position=position_dodge()) +
-  ggtitle("Favorability Towards the US by Devotion in Latin America") +
-  xlab("\nLevel of Favorability Towards the US") + ylab("Percentage\n") +
-  scale_fill_manual(name = "Group", 
-                      labels = c("Not devout at all", "Not very devout", "Devout", "Very devout"),
-                      values=c("#bcd1f7","#4E84C4", "#293352","#FC4E07")) +
-  theme(plot.caption = element_text(hjust = 0, face = "italic")) +
-  labs(caption = "Data source: Latinobarometer 2023. Individuals who answered agnostic, atheist or did not answer \non the religion question were removed.")  + 
-  scale_x_discrete(labels=c(
-    'Very favorable' = 'Very \nfavorable', 
-    'Somewhat favorable' = "Somewhat \nfavorable", 
-    'Somewhat unfavorable' = 'Somewhat \nunfavorable', 
-    'Very unfavorable' = 'Very \nunfavorable'))
-
-ggplot(q3, aes(x = dev, y= pct_us_favorable_3, fill = favorability)) + 
-  geom_bar(stat="identity", position=position_dodge()) +
-  ggtitle("Favorability Towards the US by Devotion in Latin America") +
-  xlab("\nLevel of Favorability Towards the US") + ylab("Percentage\n") +
-  scale_fill_manual(name = "Group",
-                    values=c("#bcd1f7","#4E84C4", "#293352","black")) +
-  theme(plot.caption = element_text(hjust = 0, face = "italic")) +
-  labs(caption = "Data source: Latinobarometer 2023. Individuals who answered agnostic, atheist or did not answer \non the religion question were removed.")  + 
-  scale_x_discrete(labels=c(
-    'Very favorable' = 'Very \nfavorable', 
-    'Somewhat favorable' = "Somewhat \nfavorable", 
-    'Somewhat unfavorable' = 'Somewhat \nunfavorable', 
-    'Very unfavorable' = 'Very \nunfavorable'))
-
-
-# test
-summary(lm(P23ST.A ~ christian_small * S1A, data = df))
-summary(lm(P23ST.A ~ christian_small_e * S1A, data = df))
-summary(lm(P23ST.A ~ christian_small, data = df))
-summary(lm(P23ST.A ~ christian_small_e, data = df))
-
-summary(lm(P23ST.A ~ S1A, data = df))
-
-
-
 ```
 
 ## 6. Discussion and Policy Implications

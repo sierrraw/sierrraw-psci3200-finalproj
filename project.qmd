@@ -958,11 +958,18 @@ Depending on existing national attitudes, nationality may or may not significant
 ```{r}
 #| echo: false
 #| output: true
+
+for (i in 1:nrow(fav)) {
+  for (j in 2:ncol(fav)) {
+    fav[i,j] <- round(fav[i,j], 3) * 10
+  }
+}
+
 fav_country_table <- flextable(fav)
 theme_zebra(fav_country_table) %>% 
   set_header_labels(fav_country_table, # rename cols
   country_order = "Country",
-  avg_fav_us = "National Average",
+  avg_fav_us = "National Average (0 - 10)",
   avg_fav_us_small = "Fringe Christian National Average",
   avg_fav_us_cath = "Catholic National Average",
   avg_fav_us_evan = "Evangelical National Average",

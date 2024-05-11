@@ -908,7 +908,6 @@ peru_e_model <- lm(P23ST.A ~ christian_small * peru, data = df_e)
 
 round((peru_c_model$coefficients[3] / sd(df$P23ST.A, na.rm = TRUE)), 2) # -0.13
 round((peru_c_model$coefficients[4] / sd(df$P23ST.A, na.rm = TRUE)), 2) #  0.47 
-
 round((peru_e_model$coefficients[3] / sd(df$P23ST.A, na.rm = TRUE)), 2) # -0.31
 round((peru_e_model$coefficients[4] / sd(df$P23ST.A, na.rm = TRUE)), 2) # 0.65
 
@@ -975,11 +974,8 @@ theme_zebra(fav_country_table) %>%
   avg_fav_us_evan = "Evangelical National Average",
   diff = "Difference (National Average)",
   diff2 = "Difference (Catholic)",
-  diff3 = "Difference (Evangelical)")
+  diff3 = "Difference (Evangelical)") 
 ```
-
-
-
 ## 6. Discussion and Policy Implications
 
 Being in a Fringe Christian religion was found to decrease an individual's favorability of the US, opposing my original hypothesis. 

@@ -419,6 +419,7 @@ ggplot(p2, aes(x = factor(favorability, level=c('Very unfavorable', 'Somewhat un
     'Very unfavorable' = 'Very \nunfavorable'))
 
 ```
+The regression tables show effects in terms of favorability towards the US (which range from 0 - 1). In my analysis, I describe the magnitude of the effects in units of standard deviation. 
 
 Individuals in Christian fringe religions were 0.22 standard deviations less favorable towards the US compared to Catholics and 0.38 standard deviations less favorable compared to Evangelicals. These effects were both significant.
 
@@ -437,6 +438,8 @@ modelsummary(models_a,
 ```
 
 ## 5. Empirical Extension
+
+The regression tables show effects in terms of favorability towards the US (which range from 0 - 1). In my analysis, I describe the magnitude of the effects in units of standard deviation. 
 
 #### Devotion
 
@@ -486,7 +489,6 @@ ggplot(p3, aes(x = factor(devoutness, level=c('Not devout at all', 'Not very dev
                       values = c("#FC4E07", "#FFDB6D", "#4E84C4"))
 
 ```
-
 Increased devotion was found to have a significant effect on Catholics, increasing their favorability towards the US by 0.17. However, increased devotion was not found to have a significant effect on Evangelicals or Fringe Christians. Although Fringe Christians are more devoted than Catholics and Evangelicals, this increase in devotion was not associated with a change in favorability towards the US. Holding devotion constant, being in a Fringe Christian religion was associated with a decrease of 0.05 and 0.29 in favorability compared to Catholics and Evangelicals. 
 
 ```{r}
@@ -864,8 +866,7 @@ ggplot(p_fav, aes(x = factor(country_order, level=c('Venezuela', 'Bolivia', 'Per
 
 ```
 
-We see varied effects when looking at Venezuela (low favorability), Peru (moderate favorability), and Ecuador (high favorability). The regression tables show effects in terms of favorability towards the US (which range from 0 - 1). In my analysis, I describe the magnitude of the effects in units of standard deviation. 
-
+We see varied effects when looking at Venezuela (low national favorability), Peru (moderate national favorability), and Ecuador (high national favorability). 
 **Venezuela:** Among Catholics, Venezuelan nationality by itself was associated with a 0.43 decrease in favorability and among Evangelicals, a 0.53 decrease. However, the effect of Venezuelan identity on Fringe Christian individuals was not found to significantly affect favorability, compared to Catholics or compared to Evangelicals.
 
 ```{r}
